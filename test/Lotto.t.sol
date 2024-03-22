@@ -34,4 +34,3 @@ contract Lotto649Test is Test {
     }
 
 }
-
