@@ -86,5 +86,32 @@ contract Lotto649 {
         payable(msg.sender).transfer(amount);
     }
 
-    // Additional helper functions for counting matches and calculating prizes as needed
+    // Function to fetch all tickets bought by a specific address in the current week
+    function getMyTicketsForCurrentWeek() external view returns (Ticket[] memory) {
+        uint256 currentWeek = getCurrentWeek();
+        uint256 ticketCount = 0;
+        
+        // First, count the tickets to initialize the array with proper size
+        for (uint256 i = 0; i < ticketsByWeek[currentWeek].length; i++) {
+            if (ticketsByWeek[currentWeek][i].entrant == msg.sender) {
+                ticketCount++;
+            }
+        }
+        
+        // Initialize the array of tickets with the correct size
+        Ticket[] memory myTickets = new Ticket[](ticketCount);
+        
+        // Second, populate the array
+        if (ticketCount > 0) {
+            uint256 index = 0;
+            for (uint256 i = 0; i < ticketsByWeek[currentWeek].length; i++) {
+                if (ticketsByWeek[currentWeek][i].entrant == msg.sender) {
+                    myTickets[index] = ticketsByWeek[currentWeek][i];
+                    index++;
+                }
+            }
+        }
+        
+        return myTickets;
+    }
 }
