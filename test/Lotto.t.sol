@@ -33,7 +33,7 @@ contract Lotto649Test is Test {
         
     }
 
-function testPurchaseCorrect() public {
+    function testPurchaseCorrect() public {
         uint8[6] memory numbers = [5, 12, 23, 34, 45, 46];
         vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
         
@@ -41,7 +41,6 @@ function testPurchaseCorrect() public {
         lotto.purchaseTicket{value: 1 ether}(numbers);
         vm.stopPrank();
 
-        // Assuming the existence of getMyTicketsForCurrentWeek function
         Lotto649.Ticket[] memory playerTickets = lotto.getMyTicketsForCurrentWeek();
         for (uint i = 0; i < playerTickets.length; i++) {
             for (uint8 j = 0; j < 6; j++) {
