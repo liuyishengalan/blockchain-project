@@ -1,10 +1,9 @@
-// // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Lotto649 {
     address public owner;
     uint256 public ticketPrice = 1 ether;
-    uint256 public jackpot = 1000 ether; // Assuming a fixed jackpot for simplicity
     uint256 public startTimestamp;
     uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
@@ -21,8 +20,14 @@ contract Lotto649 {
         address entrant;
     }
 
+    struct WinnerInfo {
+        address winner;
+        uint256 matchCount;
+    }
+
     mapping(uint256 => Ticket[]) public ticketsByWeek;
     mapping(address => uint256) public winnings;
+    mapping(uint256 => WinnerInfo[]) public winnersByWeek;
 
     event TicketPurchased(address indexed buyer, uint256 week, uint8[6] numbers);
     event WinnersAnnounced(uint256 week, uint8[6] winningNumbers, uint256[4] prizeAmounts);
@@ -53,23 +58,60 @@ contract Lotto649 {
         emit TicketPurchased(msg.sender, currentWeek, numbers);
     }
 
-    function drawWinners() external onlyOwner {
+    function announceWinners() public onlyOwner {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased.");
         uint8[6] memory winningNumbers = generateWinningNumbers();
-        // Reset pot and allocate prizes
         uint256 potForDistribution = pot;
-        pot = 0;
+        pot = 0; // Reset pot for the next round
 
-        // Prize distribution logic here based on the match counts
+        uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
+            uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
 
-        emit WinnersAnnounced(currentWeek, winningNumbers, [uint256(0), uint256(0), uint256(0), uint256(0)]);
+        for (uint i = 0; i < ticketsByWeek[currentWeek].length; i++) {
+            uint matchCount = 0;
+            for (uint j = 0; j < 6; j++) {
+                for (uint k = 0; k < 6; k++) {
+                    if (ticketsByWeek[currentWeek][i].numbers[j] == winningNumbers[k]) {
+                        matchCount++;
+                        break;
+                    }
+                }
+            }
+            
+            if (matchCount >= 3) {
+                uint256 prizeIndex = matchCount - 3; // Indexing into the winningPrizes and winnerCounts arrays
+                winnerCounts[prizeIndex]++;
+                winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount));
+            }
+        }
+
+        // Calculate prize amounts based on winner counts
+        if (winnerCounts[3] > 0) winningPrizes[3] = TOTAL_LEVEL_1_PRIZE / winnerCounts[3];
+        if (winnerCounts[2] > 0) winningPrizes[2] = (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2];
+        if (winnerCounts[1] > 0) winningPrizes[1] = (potForDistribution * PERCENTAGE_3 / 1000) / winnerCounts[1];
+        if (winnerCounts[0] > 0) winningPrizes[0] = TOTAL_LEVEL_4_PRIZE / winnerCounts[0];
+
+        // Update winnings mapping for each winner
+        for (uint256 i = 0; i < winnersByWeek[currentWeek].length; i++) {
+            WinnerInfo memory winnerInfo = winnersByWeek[currentWeek][i];
+            uint256 prizeIndex = winnerInfo.matchCount - 3;
+            winnings[winnerInfo.winner] += winningPrizes[prizeIndex];
+        }
+
+        emit WinnersAnnounced(currentWeek, winningNumbers, winningPrizes);
     }
 
     function generateWinningNumbers() private returns (uint8[6] memory winningNumbers) {
         for (uint8 i = 0; i < 6; i++) {
             winningNumbers[i] = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed, i))) % 49) + 1;
-            // Ensure unique winning numbers (simplified for demonstration)
+            // Ensure unique winning numbers 
+            for (uint8 j = 0; j < i; j++) {
+                if (winningNumbers[i] == winningNumbers[j]) {
+                    i--;
+                    break;
+                }
+            }
         }
         seed = (block.timestamp + block.prevrandao + seed) % 100;
         return winningNumbers;
