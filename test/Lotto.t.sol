@@ -36,17 +36,17 @@ contract Lotto649Test is Test {
     function testPurchaseCorrect() public {
         uint8[6] memory numbers = [5, 12, 23, 34, 45, 46];
         vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
-        
         vm.startPrank(player1);
         lotto.purchaseTicket{value: 1 ether}(numbers);
-        vm.stopPrank();
 
         Lotto649.Ticket[] memory playerTickets = lotto.getMyTicketsForCurrentWeek();
-        for (uint i = 0; i < playerTickets.length; i++) {
-            for (uint8 j = 0; j < 6; j++) {
-                assertEq(playerTickets[i].numbers[j], numbers[j], "Ticket numbers do not match");
-            }
-        }              
+        assertEq(playerTickets.length, 1);
+        assertEq(playerTickets[0].entrant, player1);
+        for(uint i = 0; i < 6; i++) {
+            assertEq(playerTickets[0].numbers[i], numbers[i]);
+        }
+        vm.stopPrank();  
     }
+
 
 }
