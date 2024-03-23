@@ -99,6 +99,14 @@ contract Lotto649Test is Test {
         }
         vm.stopPrank();  
     }
+    
+    function testFailPurchaseWithDuplicateNum() public {
+        uint8[6] memory numbers = [5, 5, 23, 34, 45, 46];
+        vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
+        vm.startPrank(player1);
+        lotto.purchaseTicket{value: 1 ether}(numbers);
+        vm.stopPrank();
+    }
 
 
     function testAnnounceWinnerAccess() public {
@@ -190,7 +198,14 @@ contract Lotto649Test is Test {
     //     }
     // }
 
-
+    function testFailBadTime() public {
+        uint8[6] memory numbers = [5, 12, 23, 34, 45, 46];
+        vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
+        vm.startPrank(player1);
+        vm.warp(lotto.lotteStartTimestamp() + 2 weeks);
+        lotto.purchaseTicket{value: 1 ether}(numbers);
+        vm.stopPrank();
+    }
 }
 
 

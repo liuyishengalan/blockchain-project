@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 contract Lotto649 {
     address public owner;
     uint256 public ticketPrice = 1 ether;
-    uint256 public startTimestamp;
+    uint256 public startTimestamp;  // blockchain timestamp
+    uint256 public lotteStartTimestamp; // start time of the current lotto
     uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
     uint256 public pot = 0; // Accumulated pot for the current week
@@ -25,6 +26,7 @@ contract Lotto649 {
         uint256 matchCount;
     }
 
+    mapping(uint256 => uint256[]) public lottoPoolByWeek;
     mapping(uint256 => Ticket[]) public ticketsByWeek;
     mapping(address => uint256) public winnings;
     mapping(uint256 => WinnerInfo[]) public winnersByWeek;
@@ -38,15 +40,30 @@ contract Lotto649 {
     }
 
 
+    modifier timeForNewPool() {
+        require(block.timestamp >= lotteStartTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends.");
+        _;
+    }
+
+
     constructor() {
         owner = msg.sender;
         startTimestamp = block.timestamp;
+        lotteStartTimestamp = block.timestamp;
         seed = (block.timestamp + block.prevrandao) % 100;
     }
 
-    function purchaseTicket(uint8[6] calldata numbers) external payable {
-        require(msg.value == ticketPrice, "Ticket price is 1 ETH");
-        require(block.timestamp >= startTimestamp && block.timestamp < startTimestamp + WEEK_DURATION, "Purchases are not within the allowed week");
+    function initializeNewLotto() external onlyOwner timeForNewPool {
+        lotteStartTimestamp = block.timestamp;
+        seed = (block.timestamp + block.prevrandao) % 100;
+        lottoPoolByWeek[getCurrentWeek()].push(lotteStartTimestamp); // Record the start time of the new pool for each of the Lotto
+    }
+
+
+    function purchaseTicket(uint8[6] calldata numbers) external payable{
+        require(msg.value == ticketPrice, "Ticket price is 1 ETH.");
+        require(block.timestamp >= lotteStartTimestamp && block.timestamp < lotteStartTimestamp + WEEK_DURATION, "Purchases are not within the allowed week");
+
         for (uint8 i = 0; i < 6; i++) {
             require(numbers[i] > 0 && numbers[i] <= 49, "Numbers must be between 1 and 49");
             for (uint8 j = i + 1; j < 6; j++) {
@@ -70,7 +87,7 @@ contract Lotto649 {
         pot = 0; // Reset pot for the next round
 
         uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
-            uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
+        uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
 
         for (uint i = 0; i < ticketsByWeek[currentWeek].length; i++) {
             uint matchCount = 0;
