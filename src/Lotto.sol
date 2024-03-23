@@ -39,10 +39,12 @@ contract Lotto649 {
         _;
     }
 
+
     modifier timeForNewPool() {
         require(block.timestamp >= lotteStartTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends.");
         _;
     }
+
 
     constructor() {
         owner = msg.sender;
@@ -57,13 +59,15 @@ contract Lotto649 {
         lottoPoolByWeek[getCurrentWeek()].push(lotteStartTimestamp); // Record the start time of the new pool for each of the Lotto
     }
 
+
     function purchaseTicket(uint8[6] calldata numbers) external payable{
         require(msg.value == ticketPrice, "Ticket price is 1 ETH.");
         require(block.timestamp >= lotteStartTimestamp && block.timestamp < lotteStartTimestamp + WEEK_DURATION, "Purchases are not within the allowed week");
+
         for (uint8 i = 0; i < 6; i++) {
-            require(numbers[i] > 0 && numbers[i] <= 49, "Numbers must be between 1 and 49.");
+            require(numbers[i] > 0 && numbers[i] <= 49, "Numbers must be between 1 and 49");
             for (uint8 j = i + 1; j < 6; j++) {
-                require(numbers[i] != numbers[j], "Numbers must be unique.");
+                require(numbers[i] != numbers[j], "Numbers must be unique");
             }
         }
         uint256 currentWeek = getCurrentWeek();
@@ -75,7 +79,10 @@ contract Lotto649 {
     function announceWinners() public onlyOwner {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased.");
-        uint8[6] memory winningNumbers = generateWinningNumbers();
+        //uint8[6] memory winningNumbers = generateWinningNumbers();
+        //Only for testing
+        uint8[6] memory winningNumbers = [2,6,8,12,32,42];
+        
         uint256 potForDistribution = pot;
         pot = 0; // Reset pot for the next round
 
@@ -142,6 +149,10 @@ contract Lotto649 {
         payable(msg.sender).transfer(amount);
     }
 
+     function getPotSize() public view returns (uint256) {
+        return pot;
+    }
+    
     // Function to fetch all tickets bought by a specific address in the current week
     function getMyTicketsForCurrentWeek() external view returns (Ticket[] memory) {
         uint256 currentWeek = getCurrentWeek();
@@ -170,4 +181,20 @@ contract Lotto649 {
         
         return myTickets;
     }
+
+    function getMywinnerForCurrentWeek() external view returns (WinnerInfo[] memory) {
+        uint256 currentWeek = getCurrentWeek();
+        //uint256 wCount = 0;
+        WinnerInfo[] memory mywinner = new WinnerInfo[](winnersByWeek[currentWeek].length);
+
+        for (uint256 i = 0; i < winnersByWeek[currentWeek].length; i++) {
+            mywinner[i] = (winnersByWeek[currentWeek][i]);
+        }
+        
+        return mywinner;
+    }
+
+
+
+
 }

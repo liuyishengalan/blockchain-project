@@ -26,6 +26,10 @@ $ forge build
 ```shell
 $ forge test
 ```
+### Test report
+```shell
+$ forge test --match-path test/Lotto.t.sol -vvvvv    
+```
 
 ### Format
 
