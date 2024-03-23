@@ -37,8 +37,18 @@ contract Lotto649 {
         _;
     }
 
+    modifier timeForNewPool() {
+        require(block.timestamp >= startTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends.");
+        _;
+    }
+
     constructor() {
         owner = msg.sender;
+        startTimestamp = block.timestamp;
+        seed = (block.timestamp + block.prevrandao) % 100;
+    }
+
+    function initializeNewLotto() external onlyOwner timeForNewPool {
         startTimestamp = block.timestamp;
         seed = (block.timestamp + block.prevrandao) % 100;
     }
