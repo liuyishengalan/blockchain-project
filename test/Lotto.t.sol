@@ -153,7 +153,7 @@ contract Lotto649Test is Test {
     }
 
 
-     function testWinnersByWeek() public {
+    function testWinnersByWeek() public {
         vm.deal(player2, 3 ether); 
         vm.deal(player1, 3 ether); 
         vm.prank(player1);
