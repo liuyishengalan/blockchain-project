@@ -114,7 +114,7 @@ contract Lotto649Test is Test {
         vm.deal(player2, 2 ether); 
         vm.startPrank(player2);
         lotto.purchaseTicket{value: 1 ether}(numbers);
-        vm.expectRevert("Only the owner can perform this action.");
+        vm.expectRevert("Only the owner can perform this action");
         lotto.announceWinners();
         vm.stopPrank();
     }
@@ -176,7 +176,7 @@ contract Lotto649Test is Test {
 
     function testAnnounceNoticket() public {
         vm.startPrank(owner);
-        vm.expectRevert("No tickets purchased.");
+        vm.expectRevert("No tickets purchased");
         lotto.announceWinners();
         vm.stopPrank();
     }

@@ -35,13 +35,13 @@ contract Lotto649 {
     event WinnersAnnounced(uint256 week, uint8[6] winningNumbers, uint256[4] prizeAmounts);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can perform this action.");
+        require(msg.sender == owner, "Only the owner can perform this action");
         _;
     }
 
 
     modifier timeForNewPool() {
-        require(block.timestamp >= lotteStartTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends.");
+        require(block.timestamp >= lotteStartTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends");
         _;
     }
 
@@ -61,7 +61,7 @@ contract Lotto649 {
 
 
     function purchaseTicket(uint8[6] calldata numbers) external payable{
-        require(msg.value == ticketPrice, "Ticket price is 1 ETH.");
+        require(msg.value == ticketPrice, "Ticket price is 1 ETH");
         require(block.timestamp >= lotteStartTimestamp && block.timestamp < lotteStartTimestamp + WEEK_DURATION, "Purchases are not within the allowed week");
 
         for (uint8 i = 0; i < 6; i++) {
@@ -78,7 +78,7 @@ contract Lotto649 {
 
     function announceWinners() public onlyOwner {
         uint256 currentWeek = getCurrentWeek();
-        require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased.");
+        require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
         //uint8[6] memory winningNumbers = generateWinningNumbers();
         //Only for testing
         uint8[6] memory winningNumbers = [2,6,8,12,32,42];
@@ -144,7 +144,7 @@ contract Lotto649 {
 
     function withdrawWinnings() external {
         uint256 amount = winnings[msg.sender];
-        require(amount > 0, "No winnings to withdraw.");
+        require(amount > 0, "No winnings to withdraw");
         winnings[msg.sender] = 0;
         payable(msg.sender).transfer(amount);
     }
