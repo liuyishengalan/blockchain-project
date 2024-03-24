@@ -31,7 +31,7 @@ contract Lotto649 {
     mapping(uint256 => Ticket[]) public ticketsByWeek;
     mapping(address => uint256) public winnings;
     mapping(uint256 => WinnerInfo[]) public winnersByWeek;
-    mapping(uint256 => uint8[6]) public winningNumbers;
+    mapping(uint256 => uint8[6]) private winningNumbers;
 
     event TicketPurchased(address indexed buyer, uint256 week, uint8[6] numbers);
     event WinnersAnnounced(uint256 week, uint8[6] winningNumbers, uint256[4] prizeAmounts);
@@ -167,7 +167,7 @@ contract Lotto649 {
         payable(msg.sender).transfer(amount);
     }
 
-     function getPotSize() public view returns (uint256) {
+    function getPotSize() public view returns (uint256) {
         return pot;
     }
     

@@ -77,12 +77,12 @@ contract Lotto649Test is Test {
         lotto.purchaseTicket{value: 1 ether}(numbers);
         vm.stopPrank();
     }
-   
+
     function testPotAmountAfterPurchases() public {
         uint256 initialPot = lotto.getPotSize();
         assertEq(initialPot, 0, "Initial pot size should be 0");
         vm.deal(player1, 3 ether);
-       
+        
         for (uint256 i = 0; i < 3; i++) {
             vm.startPrank(player1); 
             lotto.purchaseTicket{value: 1 ether}([1, 2, 3, 4, 5, 6]); 
