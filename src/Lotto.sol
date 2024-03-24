@@ -5,10 +5,11 @@ contract Lotto649 {
     address public owner;
     uint256 public ticketPrice = 1 ether;
     uint256 public startTimestamp;  // blockchain timestamp
-    uint256 public lotteStartTimestamp; // start time of the current lotto
+    uint256 public lotteStartTimestamp; // start time of the current ACTIVE lotto
     uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
     uint256 public pot = 0; // Accumulated pot for the current week
+
 
     // Prize Distribution Constants
     uint256 constant TOTAL_LEVEL_4_PRIZE = 54.35 ether; 
@@ -30,6 +31,7 @@ contract Lotto649 {
     mapping(uint256 => Ticket[]) public ticketsByWeek;
     mapping(address => uint256) public winnings;
     mapping(uint256 => WinnerInfo[]) public winnersByWeek;
+    mapping(uint256 => uint8[6]) public winningNumbers;
 
     event TicketPurchased(address indexed buyer, uint256 week, uint8[6] numbers);
     event WinnersAnnounced(uint256 week, uint8[6] winningNumbers, uint256[4] prizeAmounts);
@@ -45,6 +47,10 @@ contract Lotto649 {
         _;
     }
 
+    modifier winningNumAnnounced() {
+        require(winningNumbers[getCurrentWeek()][0] != 0, "Winning numbers not announced yet");
+        _;
+    }
 
     constructor() {
         owner = msg.sender;
@@ -76,15 +82,17 @@ contract Lotto649 {
         emit TicketPurchased(msg.sender, currentWeek, numbers);
     }
 
-    function announceWinners() public onlyOwner {
+
+    function announceWinners() public onlyOwner winningNumAnnounced {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
-        //uint8[6] memory winningNumbers = generateWinningNumbers();
+
+        // nums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
+
         //Only for testing
-        uint8[6] memory winningNumbers = [2,6,8,12,32,42];
+        // uint8[6] memory winningNumbers = [2,6,8,12,32,42];
         
         uint256 potForDistribution = pot;
-        pot = 0; // Reset pot for the next round
 
         uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
         uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
@@ -93,18 +101,27 @@ contract Lotto649 {
             uint matchCount = 0;
             for (uint j = 0; j < 6; j++) {
                 for (uint k = 0; k < 6; k++) {
-                    if (ticketsByWeek[currentWeek][i].numbers[j] == winningNumbers[k]) {
+                    if (ticketsByWeek[currentWeek][i].numbers[j] == winningNumbers[getCurrentWeek()][k]) {
                         matchCount++;
                         break;
                     }
                 }
             }
+
+            // for (uint k = 0; k < 6; k++) {
+            //     if (ticketsByWeek[currentWeek][i].numbers[k] == winningNumbers[k]) {
+            //         matchCount++;
+            //         break;
+            //     }
+            // }
             
             if (matchCount >= 3) {
                 uint256 prizeIndex = matchCount - 3; // Indexing into the winningPrizes and winnerCounts arrays
                 winnerCounts[prizeIndex]++;
                 winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount));
             }
+
+        pot = 0; // Reset pot for the next round
         }
 
         // Calculate prize amounts based on winner counts
@@ -120,22 +137,21 @@ contract Lotto649 {
             winnings[winnerInfo.winner] += winningPrizes[prizeIndex];
         }
 
-        emit WinnersAnnounced(currentWeek, winningNumbers, winningPrizes);
+        emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
     }
 
-    function generateWinningNumbers() private returns (uint8[6] memory winningNumbers) {
+    function generateWinningNumbers() public {
         for (uint8 i = 0; i < 6; i++) {
-            winningNumbers[i] = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed, i))) % 49) + 1;
+            winningNumbers[getCurrentWeek()][i] = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed, i))) % 49) + 1;
             // Ensure unique winning numbers 
             for (uint8 j = 0; j < i; j++) {
-                if (winningNumbers[i] == winningNumbers[j]) {
+                if (winningNumbers[getCurrentWeek()][i] == winningNumbers[getCurrentWeek()][j]) {
                     i--;
                     break;
                 }
             }
         }
         seed = (block.timestamp + block.prevrandao + seed) % 100;
-        return winningNumbers;
     }
 
     function getCurrentWeek() public view returns (uint256) {
@@ -194,7 +210,43 @@ contract Lotto649 {
         return mywinner;
     }
 
+    function getWinningNumsForCurrentWeek() external view returns (uint8[6] memory) {
+        uint256 currentWeek = getCurrentWeek();
+        uint8[6] memory nums;
+        for (uint i = 0; i < 6; i++) {
+            nums[i] = winningNumbers[currentWeek][i];
+        }
+        return nums;
+    }
 
+    // TODO: sort the ticket numbers for quicker comparison
+    function sortTicketNumber(uint8[6] memory ticket) public pure  returns (uint8[6] memory){
+        if (ticket.length > 0)
+            quickSort(ticket, 0, ticket.length - 1);
+
+        return ticket;
+    }
+
+    function quickSort(uint8[6] memory ticket, uint left, uint right) public pure {
+        if (left >= right)
+            return;
+        uint p = ticket[(left + right) / 2];   // p = the pivot element
+        uint i = left;
+        uint j = right;
+        while (i < j) {
+            while (ticket[i] < p) ++i;
+            while (ticket[j] > p) --j;         // ticket[j] > p means p still to the left, so j > 0
+            if (ticket[i] > ticket[j])
+                (ticket[i], ticket[j]) = (ticket[j], ticket[i]);
+            else
+                ++i;
+        }
+
+        // Note --j was only done when a[j] > p.  So we know: a[j] == p, a[<j] <= p, a[>j] > p
+        if (j > left)
+            quickSort(ticket, left, j - 1);    // j > left, so j > 0
+        quickSort(ticket, j + 1, right);
+    }
 
 
 }

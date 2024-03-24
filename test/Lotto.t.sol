@@ -59,6 +59,7 @@ contract Lotto649Test is Test {
         vm.stopPrank();
     }
 
+    // below has the function not depend on the start time defined in test
     function testBuyTicketWithWrongTime() public {
         vm.deal(player2, 2 ether);
         vm.warp(startAt + 2 weeks);
@@ -110,10 +111,13 @@ contract Lotto649Test is Test {
 
 
     function testAnnounceWinnerAccess() public {
-        uint8[6] memory numbers = [2, 6, 32, 42, 8, 12];
+        vm.startPrank(owner);
+        lotto.generateWinningNumbers();
+        vm.stopPrank();
+        uint8[6] memory nums = lotto.getWinningNumsForCurrentWeek();
         vm.deal(player2, 2 ether); 
         vm.startPrank(player2);
-        lotto.purchaseTicket{value: 1 ether}(numbers);
+        lotto.purchaseTicket{value: 1 ether}(nums);
         vm.expectRevert("Only the owner can perform this action");
         lotto.announceWinners();
         vm.stopPrank();
@@ -121,10 +125,13 @@ contract Lotto649Test is Test {
 
 
     function testAnnounceWinner() public {
-        uint8[6] memory numbers = [2, 6, 32, 42, 8, 12];
+        vm.startPrank(owner);
+        lotto.generateWinningNumbers();
+        vm.stopPrank();
+        uint8[6] memory nums = lotto.getWinningNumsForCurrentWeek();
         vm.deal(owner, 2 ether); 
         vm.startPrank(owner);
-        lotto.purchaseTicket{value: 1 ether}(numbers);
+        lotto.purchaseTicket{value: 1 ether}(nums);
         lotto.announceWinners();
         assertEq(lotto.winnings(owner), 1000 ether, "Incorrect prize amount for the winner");
         vm.stopPrank();
@@ -132,19 +139,37 @@ contract Lotto649Test is Test {
     
 
     function testMultipuleAnnounceWinner() public {
-        //uint8[6] memory numbers = [2, 6, 32, 42, 8, 12];
+        vm.startPrank(owner);
+        lotto.generateWinningNumbers();
+        vm.stopPrank();
+        uint8[6] memory nums = lotto.getWinningNumsForCurrentWeek();
+
+        // generate random numbers not in winning numbers
+        uint8[6] memory nums2;
+        uint8 count = 0;
+        for (uint8 i = 1; i < 13; i++) {
+            if(count == 6) break;
+            bool unique = true;
+            for(uint8 j = 0; j < 6; j++) {
+                if(i == nums[j])  unique = false;
+            }
+            if(unique) {
+                nums2[count++] = i;
+            }
+        }
+
         vm.deal(owner, 3 ether); 
         vm.deal(player1, 3 ether); 
         vm.deal(player2, 3 ether); 
         vm.prank(player1);
-        lotto.purchaseTicket{value: 1 ether}([2, 6, 32, 42, 8, 12]);
+        lotto.purchaseTicket{value: 1 ether}(nums);
         vm.prank(player2);
-        lotto.purchaseTicket{value: 1 ether}([2, 6, 34, 33, 8, 12]);
+        lotto.purchaseTicket{value: 1 ether}([nums[0], nums[1], nums[2],nums[4] ,nums2[1] ,nums2[2]]);
         vm.prank(player2);
-        lotto.purchaseTicket{value: 1 ether}([1, 3, 34, 33, 5, 7]);
+        lotto.purchaseTicket{value: 1 ether}([nums2[0] ,nums2[1] ,nums2[2], nums2[3], nums2[4], nums2[5]]);
 
         vm.startPrank(owner);
-        lotto.purchaseTicket{value: 1 ether}([2, 6, 34, 33, 8, 12]);
+        lotto.purchaseTicket{value: 1 ether}([nums[0], nums[1], nums[2],nums[4] ,nums2[1] ,nums2[2]]);
         lotto.announceWinners();
         assertEq(lotto.winnings(player1), 1000 ether, "Incorrect prize amount for the winner1");
         assertEq(lotto.winnings(player2), 0.27 ether, "Incorrect prize amount for the winner2");
@@ -154,14 +179,31 @@ contract Lotto649Test is Test {
 
 
     function testWinnersByWeek() public {
+        vm.startPrank(owner);
+        lotto.generateWinningNumbers();
+        vm.stopPrank();
+        uint8[6] memory nums = lotto.getWinningNumsForCurrentWeek();
         vm.deal(player2, 3 ether); 
         vm.deal(player1, 3 ether); 
         vm.prank(player1);
-        lotto.purchaseTicket{value: 1 ether}([2, 6, 32, 42, 8, 12]);
+        lotto.purchaseTicket{value: 1 ether}(nums);
         vm.prank(player2);
-        lotto.purchaseTicket{value: 1 ether}([1, 3, 34, 33, 5, 7]);
+
+        // generate random numbers not in winning numbers
+        uint8[6] memory nums2;
+        for (uint8 i = 1; i < 7; i++) {
+            bool unique = true;
+            for(uint8 j = 0; j < 3; j++) {
+                if(i == nums[j])  unique = false;
+            }
+            if(unique) {
+                nums2[i-1] = i;
+            }
+        }
+
+        lotto.purchaseTicket{value: 1 ether}([nums[0], nums[1], nums[2],nums2[0] ,nums2[1] ,nums2[2]]);
         vm.prank(player2);
-        lotto.purchaseTicket{value: 1 ether}([2, 12, 32, 33, 5, 7]);
+        lotto.purchaseTicket{value: 1 ether}([nums2[0] ,nums2[1] ,nums2[2], nums2[3], nums2[4], nums2[5]]);
 
         vm.startPrank(owner);
         lotto.announceWinners();
@@ -175,6 +217,9 @@ contract Lotto649Test is Test {
     }
 
     function testAnnounceNoticket() public {
+        vm.startPrank(owner);
+        lotto.generateWinningNumbers();
+        vm.stopPrank();
         vm.startPrank(owner);
         vm.expectRevert("No tickets purchased");
         lotto.announceWinners();
