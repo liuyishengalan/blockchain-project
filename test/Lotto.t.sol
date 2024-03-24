@@ -31,7 +31,6 @@ contract Lotto649Test is Test {
 
         uint256 winnings = lotto.winnings(player1);
         assertEq(winnings, 0);
-        
     }
 
     function testBuyTicketWithInsufficientFunds() public {
@@ -69,11 +68,12 @@ contract Lotto649Test is Test {
     //     vm.stopPrank();
     // }
 
-    function testFailBadPurchaseTime() public {
+    function testBadPurchaseTime() public {
         uint8[6] memory numbers = [5, 12, 23, 34, 45, 46];
         vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
         vm.startPrank(player1);
         vm.warp(lotto.lotteStartTimestamp() + 2 weeks);
+        vm.expectRevert("Purchases are not within the allowed week");
         lotto.purchaseTicket{value: 1 ether}(numbers);
         vm.stopPrank();
     }
@@ -84,8 +84,8 @@ contract Lotto649Test is Test {
         vm.deal(player1, 3 ether);
         
         for (uint256 i = 0; i < 3; i++) {
-            vm.startPrank(player1); 
-            lotto.purchaseTicket{value: 1 ether}([1, 2, 3, 4, 5, 6]); 
+            vm.startPrank(player1);
+            lotto.purchaseTicket{value: 1 ether}([1, 2, 3, 4, 5, 6]);
         }
 
         uint256 expectedPot = 3 ether;
@@ -110,14 +110,14 @@ contract Lotto649Test is Test {
         vm.stopPrank();  
     }
     
-    function testFailPurchaseWithDuplicateNum() public {
+    function testPurchaseWithDuplicateNum() public {
         uint8[6] memory numbers = [5, 5, 23, 34, 45, 46];
         vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
         vm.startPrank(player1);
+        vm.expectRevert("Numbers must be unique");
         lotto.purchaseTicket{value: 1 ether}(numbers);
         vm.stopPrank();
     }
-
 
     function testAnnounceWinnerAccess() public {
         vm.startPrank(owner);
@@ -132,7 +132,6 @@ contract Lotto649Test is Test {
         vm.stopPrank();
     }
 
-
     function testAnnounceWinner() public {
         vm.startPrank(owner);
         lotto.generateWinningNumbers();
@@ -146,7 +145,6 @@ contract Lotto649Test is Test {
         vm.stopPrank();
     }
     
-
     function testMultipuleAnnounceWinner() public {
         vm.startPrank(owner);
         lotto.generateWinningNumbers();
@@ -186,7 +184,6 @@ contract Lotto649Test is Test {
         vm.stopPrank();
     }
 
-
     function testWinnersByWeek() public {
         vm.startPrank(owner);
         lotto.generateWinningNumbers();
@@ -222,7 +219,6 @@ contract Lotto649Test is Test {
         assertEq(winners[1].winner, player2, "Wrong winners for winner2 ");
         assertEq(winners[1].matchCount, 3, "Wrong count for winner2");
         vm.stopPrank();
-        
     }
 
     function testAnnounceNoticket() public {
@@ -234,9 +230,6 @@ contract Lotto649Test is Test {
         lotto.announceWinners();
         vm.stopPrank();
     }
-
-
-
 
     function testGenerateWinningNumbers() public {
         vm.startPrank(owner);
@@ -253,8 +246,4 @@ contract Lotto649Test is Test {
             }
         }
     }
-
-
 }
-
-
