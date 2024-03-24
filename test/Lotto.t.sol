@@ -238,19 +238,21 @@ contract Lotto649Test is Test {
 
 
 
-    // function testGenerateWinningNumbers() public {
-        
-    //     uint8 [6] memory winningNumbers = lotto.generateWinningNumbers();    
-    //     for (uint i = 0; i < 6; i++) {
-    //         assertTrue(winningNumbers[i] >= 1 && winningNumbers[i] <= 49, "Winning number out of range");
-    //     }
+    function testGenerateWinningNumbers() public {
+        vm.startPrank(owner);
+        lotto.generateWinningNumbers();
+        vm.stopPrank();
+        uint8[6] memory nums = lotto.getWinningNumsForCurrentWeek();
+        for (uint i = 0; i < 6; i++) {
+            assertTrue(nums[i] >= 1 && nums[i] <= 49, "Winning number out of range");
+        }
 
-    //     for (uint i = 0; i < 6; i++) {
-    //         for (uint j = i + 1; j < 6; j++) {
-    //             assertNotEq(winningNumbers[i], winningNumbers[j], "Winning numbers are not unique");
-    //         }
-    //     }
-    // }
+        for (uint i = 0; i < 6; i++) {
+            for (uint j = i + 1; j < 6; j++) {
+                assertNotEq(nums[i], nums[j], "Winning numbers are not unique");
+            }
+        }
+    }
 
 
 }
