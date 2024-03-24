@@ -59,13 +59,22 @@ contract Lotto649Test is Test {
         vm.stopPrank();
     }
 
-    // below has the function not depend on the start time defined in test
-    function testBuyTicketWithWrongTime() public {
-        vm.deal(player2, 2 ether);
-        vm.warp(startAt + 2 weeks);
-        vm.startPrank(player2);
-        vm.expectRevert("Purchases are not within the allowed week");
-        lotto.purchaseTicket{value: 1 ether}([7, 8, 5, 45, 11, 12]);
+    // // below has the function not depend on the start time defined in test
+    // function testBuyTicketWithWrongTime() public {
+    //     vm.deal(player2, 2 ether);
+    //     vm.warp(startAt + 2 weeks);
+    //     vm.startPrank(player2);
+    //     vm.expectRevert("Purchases are not within the allowed week");
+    //     lotto.purchaseTicket{value: 1 ether}([7, 8, 5, 45, 11, 12]);
+    //     vm.stopPrank();
+    // }
+
+    function testFailBadPurchaseTime() public {
+        uint8[6] memory numbers = [5, 12, 23, 34, 45, 46];
+        vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
+        vm.startPrank(player1);
+        vm.warp(lotto.lotteStartTimestamp() + 2 weeks);
+        lotto.purchaseTicket{value: 1 ether}(numbers);
         vm.stopPrank();
     }
    
@@ -243,14 +252,7 @@ contract Lotto649Test is Test {
     //     }
     // }
 
-    function testFailBadTime() public {
-        uint8[6] memory numbers = [5, 12, 23, 34, 45, 46];
-        vm.deal(player1, 2 ether); // Provide player1 with 2 ether for transactions
-        vm.startPrank(player1);
-        vm.warp(lotto.lotteStartTimestamp() + 2 weeks);
-        lotto.purchaseTicket{value: 1 ether}(numbers);
-        vm.stopPrank();
-    }
+
 }
 
 

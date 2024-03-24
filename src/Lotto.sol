@@ -87,7 +87,7 @@ contract Lotto649 {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
 
-        // nums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
+        // uint8[6] memory winningNums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
 
         //Only for testing
         // uint8[6] memory winningNumbers = [2,6,8,12,32,42];
@@ -108,8 +108,10 @@ contract Lotto649 {
                 }
             }
 
+            // uint8[6] memory ticketNums = sortTicketNumber(ticketsByWeek[currentWeek][i].numbers);
+
             // for (uint k = 0; k < 6; k++) {
-            //     if (ticketsByWeek[currentWeek][i].numbers[k] == winningNumbers[k]) {
+            //     if (ticketNums[k] == winningNums[k]) {
             //         matchCount++;
             //         break;
             //     }
@@ -219,6 +221,7 @@ contract Lotto649 {
         return nums;
     }
 
+    // ** helper functions **
     // TODO: sort the ticket numbers for quicker comparison
     function sortTicketNumber(uint8[6] memory ticket) public pure  returns (uint8[6] memory){
         if (ticket.length > 0)
