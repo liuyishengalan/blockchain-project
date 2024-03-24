@@ -88,9 +88,6 @@ contract Lotto649 {
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
 
         // uint8[6] memory winningNums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
-
-        //Only for testing
-        // uint8[6] memory winningNumbers = [2,6,8,12,32,42];
         
         uint256 potForDistribution = pot;
 
