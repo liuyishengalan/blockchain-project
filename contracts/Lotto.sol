@@ -8,7 +8,7 @@ contract Lotto649 {
     uint256 public lotteStartTimestamp; // start time of the current ACTIVE lotto
     uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
-    uint256 public pot = 1; // Accumulated pot for the current week
+    uint256 public pot = 0; // Accumulated pot for the current week
 
 
     // Prize Distribution Constants
