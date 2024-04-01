@@ -16,10 +16,12 @@ export function App(): ReactElement {
   return (
     <StyledAppDiv>
       <Lotto />
-      <ActivateDeactivate />
-      <SectionDivider />
-      <WalletStatus />
-      <SectionDivider />
+
+      
+      {/* <ActivateDeactivate /> */}
+      {/* <SectionDivider /> */}
+      {/* <WalletStatus /> */}
+      {/* <SectionDivider /> */}
       {/* <SignMessage /> */}
       {/* <SectionDivider /> */}
       {/* <Greeter /> */}
