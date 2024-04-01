@@ -39,6 +39,10 @@ export function Lotto(): ReactElement {
   const [openCheckResultsModal, setOpenCheckResultsModal] = useState(false);
   const [openHowItWorksModal, setOpenHowItWorksModal] = useState(false);
 
+  // dummy data for the prize pool and time remaining
+  const prizePool = "50"; // Replace with actual logic to get prize pool from contract
+  const timeRemaining = "7"; // Replace with actual logic to get time remaining
+
   useEffect((): void => {
     if (!library) return;
     const signer = library.getSigner();
@@ -99,6 +103,11 @@ export function Lotto(): ReactElement {
     setOpenAdminLoginModal(false);
   }
 
+  const handlePurchase = (ticketNumbers: number[]) => {
+    console.log('Purchasing ticket with numbers: ', ticketNumbers);
+    // Here you would interact with your contract to purchase a ticket
+  };
+
   
   // Dummy winning numbers for display purposes
   const winningNumbers = [2, 14, 26, 27, 33, 49];
@@ -123,7 +132,12 @@ export function Lotto(): ReactElement {
             aria-describedby="buy-ticket-modal-description"
           >
             <div style={modalStyle as React.CSSProperties}>
-              <BuyTicket handleClose={handleCloseBuyTicketModal} />
+            <BuyTicket
+              handleClose={handleCloseBuyTicketModal}
+              handlePurchase={handlePurchase}
+              prizePool={prizePool}
+              timeRemaining={timeRemaining}
+            />
             </div>
           </Modal>
         </Box>
