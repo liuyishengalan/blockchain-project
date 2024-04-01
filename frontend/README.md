@@ -12,7 +12,7 @@ The Dapp is a simple, but complete React Dapp that interacts with a locally run 
 6. How to keep the data of the connected wallet up-to-date by listening to new block events via ethers.js as new blocks are mined.
 
 To start the frontend:
-1. `cd` to the frontend directory of this project
+1. `cd` to the frontend directory of this project and execute the following commands: `ln -s /home/$your_directory/blockchain-project/artifacts src/artifacts` to create a symbolic link to the artifacts directory in the frontend directory.
 2. Run `yarn` to install the necessary dependencies
 3. `yarn start` to startup the webserver
 4. Visit `localhost:3000` in your browser to interact with the browser Dapp and the Greeter contract running on your local Hardhat blockchain.
