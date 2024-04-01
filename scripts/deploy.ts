@@ -1,24 +1,21 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const greetingString = "Hello EECE571G";
+  // Fetch the contract factory
+  const Lotto649 = await ethers.getContractFactory("Lotto649");
 
-  const txValue = 0;
+  // Sign and deploy the contract
+  const lotto649 = await Lotto649.deploy();
 
-  const greeter = await ethers.deployContract("Greeter", [greetingString], {
-    value: txValue,
-  });
+  // Wait for the deployment to finish
+  await lotto649.waitForDeployment();
 
-  await greeter.waitForDeployment();
-
-  console.log(
-    `Greeter with ${greetingString} deployed to ${greeter.target}`
-  );
+  console.log("Lotto649 deployed to:", lotto649.target);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

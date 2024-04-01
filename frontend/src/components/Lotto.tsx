@@ -33,7 +33,6 @@ export function Lotto(): ReactElement {
   const [lottoContractAddr, setLottoContractAddr] = useState<string>('');
   const [signer, setSigner] = React.useState<ethers.Signer>();
   const [lottoContract, setLottoContract] = React.useState<Contract>();
-  const [buyTicketMode, setBuyTicketMode] = useState(false);
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
   const [openAdminLoginModal, setOpenAdminLoginModal] = useState(false);
   const [openCheckResultsModal, setOpenCheckResultsModal] = useState(false);
