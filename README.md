@@ -1,13 +1,16 @@
 # Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Deploy your own contract on Sepolia
 
-Try running some of the following tasks:
-
+Remember to create a `.env` file with the following content:
 ```shell
-npx hardhat help
+SEPOLIA_API_URL = "https://eth-sepolia.g.alchemy.com/v2/TBcmuWUU_TiijYWRaoNwlG49EtZsMyd4"
+SEPOLIA_PRIVATE_KEY = 'THE-PRIVATE-KEY'
+```
+Next, run the following commands:
+```shell
+npm install
 npx hardhat test
 REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+npx hardhat run scripts/deploy.ts --network sepolia
 ```
