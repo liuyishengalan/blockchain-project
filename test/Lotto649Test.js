@@ -1,6 +1,7 @@
 const { ethers,network } = require("hardhat");
 const { expect } = require("chai");
 const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
+//import "hardhat/console.sol";
 
 describe("Lotto649", function () {
     let owner;
@@ -87,9 +88,9 @@ describe("Lotto649", function () {
         const {lotto,owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
         const numbers = [5, 12, 23, 34, 45, 46];
         
-        await lotto.connect(player1).purchaseTicket(numbers, { value: ticketPrice ,gasLimit:10000000 });
+        await lotto.connect(player1).purchaseTicket(numbers, { value: ticketPrice});
         
-        await lotto.connect(owner).generateWinningNumbers();
+        await lotto.connect(owner).generateWinningNumbers({gasLimit: 5000000});
     
         await expect(lotto.connect(player1).announceWinners())
           .to.be.revertedWith("Only the owner can perform this action");
@@ -103,7 +104,7 @@ describe("Lotto649", function () {
         await lotto.connect(owner).generateWinningNumbers();
         const nums = await lotto.getWinningNumsForCurrentWeek();
         const mutableNums = [...nums];
-        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice, gasLimit: 10000000 });
+        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice });
         await lotto.connect(owner).announceWinners();
         const player1Winnings = await lotto.winnings(player1.address);
         expect(player1Winnings).to.equal(expectedPrize, "Incorrect prize amount for the winner");
@@ -116,16 +117,20 @@ describe("Lotto649", function () {
         const expectedPrizeOwner = ethers.parseEther("0.27");
     
         await lotto.connect(owner).generateWinningNumbers();
-        const nums = await lotto.getWinningNumsForCurrentWeek();
+        const nums = (await lotto.getWinningNumsForCurrentWeek());
         const mutableNums = [...nums];
+        for (let i =0; i <6;i++){
+            mutableNums[i] = Number(nums[i])
+        }
+        
         // Generate non-winning numbers
         const nums2 = [];
         let count = 0;
-        for (let i = 1; i < 13; i++) {
+        for (let i = 1; i <= 49; i++) {
             if (count === 6) break;
             let unique = true;
             for (let j = 0; j < 6; j++) {
-                if (i === nums[j]) {
+                if (i === mutableNums[j]) {
                     unique = false;
                     break;
                 }
@@ -135,11 +140,11 @@ describe("Lotto649", function () {
                 count++;
             }
         }
-    
-        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice , gasLimit: 10000000 });
-        await lotto.connect(player2).purchaseTicket([mutableNums[0], mutableNums[1], mutableNums[2], mutableNums[4], nums2[1], nums2[2]], { value: ticketPrice, gasLimit: 10000000 });
-        await lotto.connect(player2).purchaseTicket([nums2[0], nums2[1], nums2[2], nums2[3], nums2[4], nums2[5]], { value: ticketPrice, gasLimit: 10000000 });
-        await lotto.connect(owner).purchaseTicket([mutableNums[0], mutableNums[1], mutableNums[2], mutableNums[4], nums2[1], nums2[2]], { value: ticketPrice, gasLimit: 10000000 });
+        //console.log(nums,nums2,mutableNums);
+        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice });
+        await lotto.connect(player2).purchaseTicket([mutableNums[0], mutableNums[1], mutableNums[2], mutableNums[4], nums2[1], nums2[2]], { value: ticketPrice, });
+        await lotto.connect(player2).purchaseTicket([nums2[0], nums2[1], nums2[2], nums2[3], nums2[4], nums2[5]], { value: ticketPrice }); //, gasLimit: 10000000
+        await lotto.connect(owner).purchaseTicket([mutableNums[0], mutableNums[1], mutableNums[2], mutableNums[4], nums2[1], nums2[2]], { value: ticketPrice });
     
         
         await lotto.connect(owner).announceWinners();
@@ -158,17 +163,20 @@ describe("Lotto649", function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
     
         await lotto.connect(owner).generateWinningNumbers();
-        const nums = await lotto.getWinningNumsForCurrentWeek();
+        const nums = (await lotto.getWinningNumsForCurrentWeek());
         const mutableNums = [...nums];
+        for (let i =0; i <6;i++){
+            mutableNums[i] = Number(nums[i])
+        }
         // Purchase tickets for players
-        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice,  gasLimit: 10000000});
+        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice});
         const nums2 = [];
         let count = 0;
-        for (let i = 1; i < 13; i++) {
+        for (let i = 1; i <= 49; i++) {
             if (count === 6) break;
             let unique = true;
             for (let j = 0; j < 6; j++) {
-                if (i === nums[j]) {
+                if (i === mutableNums[j]) {
                     unique = false;
                     break;
                 }
@@ -179,8 +187,8 @@ describe("Lotto649", function () {
             }
         }
         
-        await lotto.connect(player2).purchaseTicket([mutableNums[0], mutableNums[1], mutableNums[2], nums2[0], nums2[1], nums2[2]], { value: ticketPrice ,gasLimit: 10000000 });
-        await lotto.connect(player2).purchaseTicket(nums2, { value: ticketPrice , gasLimit: 10000000});
+        await lotto.connect(player2).purchaseTicket([mutableNums[0], mutableNums[1], mutableNums[2], nums2[0], nums2[1], nums2[2]], { value: ticketPrice });
+        await lotto.connect(player2).purchaseTicket(nums2, { value: ticketPrice });
     
         await lotto.connect(owner).announceWinners();
     
