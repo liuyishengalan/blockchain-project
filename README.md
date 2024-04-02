@@ -1,6 +1,6 @@
-# Sample Hardhat Project
+# Hardhat Project - Lotto on blockchain
 
-Deploy your own contract on Sepolia
+Deploy this contract on Sepolia
 
 Remember to create a `.env` file with the following content:
 ```shell
@@ -15,4 +15,4 @@ npx hardhat run scripts/deploy.ts --network sepolia
 ```
 You will see a deployed message with the contract address. Copy the address and paste it in the `lotto.ts` file in the frontend folder.
 
-Check the frontend readme to see how to run the frontend
+Check the frontend readme under the directory `frontend` to see how to run the frontend.
