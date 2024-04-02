@@ -43,6 +43,7 @@ export function Lotto(): ReactElement {
   const [latestWinningWeek, setLatestWinningWeek] = useState<number>();
   const [currentWeek, setCurrentWeek] = useState<number>();
   const [prizePool, setPrizePool] = useState<string>();
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
   const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestBuyTicket } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)
@@ -76,6 +77,15 @@ export function Lotto(): ReactElement {
     getWeek();
     getPrizePool();
   }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool]);
+
+  useEffect(() => {
+    if (active) {
+      setShouldAnimate(true);
+      // Optionally, remove the animation class after the animation ends to avoid re-animating on re-renders
+      const timer = setTimeout(() => setShouldAnimate(false), 1000); // Match the animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [active]);
 
 
   const handleConnectWallet = useCallback(async () => {
@@ -128,7 +138,7 @@ export function Lotto(): ReactElement {
   };
   if (active) {
     return (
-      <Container maxWidth="sm">
+      <Container maxWidth="sm" className={shouldAnimate ? 'fade-in' : ''}>
         <Box sx={{ my: 4, textAlign: 'center' }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Lotto 6/49 on Blockchain
@@ -235,10 +245,7 @@ export function Lotto(): ReactElement {
             </Button>
           </Box>
         </Box>
-        
       </Container>
-      
     );
   }
-  
 }
