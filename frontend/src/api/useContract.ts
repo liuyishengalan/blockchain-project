@@ -72,7 +72,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         try {
             // Ensure to include the value field to send 1 ETH along with the transaction
             const tx = await lottoContract.purchaseTicket(ticketNumbers, {
-                value: ethers.utils.parseEther("1"), // Converts 1 ETH to Wei
+                value: ethers.utils.parseEther("0.001"), // Converts 1 ETH to Wei
             });
             console.log("Ticket purchased successfully");
         } catch (error) {
