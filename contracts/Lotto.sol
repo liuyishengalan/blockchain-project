@@ -197,6 +197,19 @@ contract Lotto649 {
         return myTickets;
     }
 
+    function getTicketArrayLen() external view returns (uint256 lencount) {
+        uint256 currentWeek = getCurrentWeek();
+        uint256 ticketCount = 0;
+        
+        // First, count the tickets to initialize the array with proper size
+        for (uint256 i = 0; i < ticketsByWeek[currentWeek].length; i++) {
+            if (ticketsByWeek[currentWeek][i].entrant == msg.sender) {
+                ticketCount++;
+            }
+        }
+        return ticketCount;
+    }
+
     function getMywinnerForCurrentWeek() external view returns (WinnerInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
         //uint256 wCount = 0;
@@ -208,6 +221,8 @@ contract Lotto649 {
         
         return mywinner;
     }
+
+    
 
     function getWinningNumsForCurrentWeek() external view returns (uint8[6] memory) {
         uint256 currentWeek = getCurrentWeek();
@@ -247,6 +262,7 @@ contract Lotto649 {
             quickSort(ticket, left, j - 1);    // j > left, so j > 0
         quickSort(ticket, j + 1, right);
     }
-
+    
+    
 
 }
