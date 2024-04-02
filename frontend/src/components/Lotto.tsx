@@ -27,16 +27,17 @@ const modalStyle = {
   maxHeight: '80vh',
   overflow: 'auto',
 };
-
+const contractAddress = '0x621eaf3EEf4C0BDa55af6EA783E53e539F0a3901';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
-  const [lottoContractAddr, setLottoContractAddr] = useState<string>('');
+  const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
   const [signer, setSigner] = React.useState<ethers.Signer>();
   const [lottoContract, setLottoContract] = React.useState<Contract>();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
   const [openAdminLoginModal, setOpenAdminLoginModal] = useState(false);
   const [openCheckResultsModal, setOpenCheckResultsModal] = useState(false);
   const [openHowItWorksModal, setOpenHowItWorksModal] = useState(false);
+  const [winningNumbers, setWinningNumbers] = useState<number[]>([]);
 
   // dummy data for the prize pool and time remaining
   const prizePool = "50"; // Replace with actual logic to get prize pool from contract
@@ -68,7 +69,26 @@ export function Lotto(): ReactElement {
       console.error('Error on connecting to MetaMask:', error);
     }
   }, [activate]); // Depend on the activate function
+  const fetchWinningNumbers = useCallback(async () => {
+    if (!lottoContract) return;
   
+    try {
+      const winningNums = await lottoContract.getWinningNumsForCurrentWeek();
+      // Assume winningNums is an array of BigNumber and convert accordingly
+      setWinningNumbers(winningNums);
+    } catch (error) {
+      console.error("Failed to fetch winning numbers:", error);
+    }
+  }, [lottoContract]); // Depends on lottoContract
+
+  
+  useEffect(() => {
+    // This function is called automatically when lottoContract is set
+    fetchWinningNumbers();
+  }, [fetchWinningNumbers]); 
+  
+// Wrapped in useCallback to ensure it doesn't change unless necessary
+
   
   const handleBuyTicket = () => {
     setOpenBuyTicketModal(true);
@@ -109,7 +129,7 @@ export function Lotto(): ReactElement {
 
   
   // Dummy winning numbers for display purposes
-  const winningNumbers = [2, 14, 26, 27, 33, 49];
+  // const winningNumbers = [2, 14, 26, 27, 33, 49];
 
   return (
     <Container maxWidth="sm">
@@ -117,6 +137,7 @@ export function Lotto(): ReactElement {
         <Typography variant="h4" component="h1" gutterBottom>
           Welcome to Lotto 6/49 on the Blockchain!
         </Typography>
+
         <Box>
           <Button variant="contained" onClick={handleConnectWallet}>
             Connect to Metamask
@@ -146,14 +167,15 @@ export function Lotto(): ReactElement {
             Saturday, March 23, 2024
           </Typography>
           <Grid container spacing={2} justifyContent="center">
-            {winningNumbers.map((number) => (
-              <Grid key={number} item>
-                <Paper elevation={4} sx={{ p: 1, width: '2rem', textAlign: 'center' }}>
-                  {number}
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+          {winningNumbers.map((number, index) => (
+            <Grid key={index} item>
+              <Paper elevation={4} sx={{ p: 1, width: '2rem', textAlign: 'center' }}>
+                {number}
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+
         </Box>
         <Box mt={4}>
           <Button variant="text" onClick={handleCheckResults}>
