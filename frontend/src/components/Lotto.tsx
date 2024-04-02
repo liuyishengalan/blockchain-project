@@ -127,20 +127,16 @@ export function Lotto(): ReactElement {
     // Here you would interact with your contract to purchase a ticket
   };
 
-  
-  // Dummy winning numbers for display purposes
-  // const winningNumbers = [2, 14, 26, 27, 33, 49];
-
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4, textAlign: 'center' }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Welcome to Lotto 6/49 on the Blockchain!
+          Lotto 6/49 on Blockchain
         </Typography>
 
         <Box>
           <Button variant="contained" onClick={handleConnectWallet}>
-            Connect to Metamask
+            {active ? 'Connected' : 'Connect to Metamask'}
           </Button>
           <Button variant="outlined" onClick={handleBuyTicket} sx={{ ml: 2 }}>
             Buy a Ticket

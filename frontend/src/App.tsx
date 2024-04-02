@@ -43,7 +43,7 @@ export function App(): ReactElement {
     () => ({
       background: {
         color: {
-          value: "#7f7f7f",
+          value: "#BFBFBF",
         },
       },
       fpsLimit: 120,
