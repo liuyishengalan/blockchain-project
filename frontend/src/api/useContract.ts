@@ -1,4 +1,4 @@
-import { Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
 
@@ -47,7 +47,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         }
     };
 
-    const fetchPrizePool = async (): Promise<number | undefined> => {
+    const fetchPrizePool = async (): Promise<string | undefined> => {
         if (!lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
@@ -55,12 +55,31 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
 
         try {
             const prizePool = await lottoContract.getPotSize();
-            return prizePool.toNumber();
+            const prizePool_ether = ethers.utils.formatEther(prizePool).toString();
+            return prizePool_ether;
         } catch (error) {
             console.error("Failed to fetch prize pool:", error);
             return;
         }
     }
+
+    const requestBuyTicket = async (ticketNumbers: number[]) => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+    
+        try {
+            // Ensure to include the value field to send 1 ETH along with the transaction
+            const tx = await lottoContract.purchaseTicket(ticketNumbers, {
+                value: ethers.utils.parseEther("1"), // Converts 1 ETH to Wei
+            });
+            console.log("Ticket purchased successfully");
+        } catch (error) {
+            console.error("Failed to purchase ticket:", error);
+        }
+    };
+    
 
     // Initialize contract upon hook call
     initializeContract();
@@ -69,5 +88,6 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         fetchWinningNumbers,
         fetchCurrentWeek,
         fetchPrizePool,
+        requestBuyTicket,
     };
 }

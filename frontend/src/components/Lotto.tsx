@@ -28,7 +28,7 @@ const modalStyle = {
   maxHeight: '80vh',
   overflow: 'auto',
 };
-const contractAddress = '0x621eaf3EEf4C0BDa55af6EA783E53e539F0a3901';
+const contractAddress = '0xc00836153077ed37cCE659098Ed10c8f10b39C9c';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
   const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
@@ -41,9 +41,9 @@ export function Lotto(): ReactElement {
   const [winningNumbers, setWinningNumbers] = useState<number[]>([]);
   const [latestWinningWeek, setLatestWinningWeek] = useState<number>();
   const [currentWeek, setCurrentWeek] = useState<number>();
-  const [prizePool, setPrizePool] = useState<number>();
+  const [prizePool, setPrizePool] = useState<string>();
 
-  const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool } = useLottoContract(contractAddress, library);
+  const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestBuyTicket } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)
   const daysLeft = 3 - new Date().getDay();
 
@@ -122,7 +122,8 @@ export function Lotto(): ReactElement {
 
   const handlePurchase = (ticketNumbers: number[]) => {
     console.log('Purchasing ticket with numbers: ', ticketNumbers);
-    // Here you would interact with your contract to purchase a ticket
+    requestBuyTicket(ticketNumbers);
+
   };
 
   return (
@@ -150,7 +151,7 @@ export function Lotto(): ReactElement {
               handleClose={handleCloseBuyTicketModal}
               handlePurchase={handlePurchase}
               currentWeek={currentWeek || 0} // Provide a default value for currentWeek
-              prizePool={prizePool || 0}
+              prizePool={prizePool || ''}
               timeRemaining={daysLeft}
             />
             </div>

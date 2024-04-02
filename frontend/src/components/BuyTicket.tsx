@@ -5,9 +5,10 @@ interface BuyTicketProps {
   handleClose: () => void;
   handlePurchase: (numbers: number[]) => void; // Add this to handle the purchase
   currentWeek: number; // Add this to show the current week
-  prizePool: number; // Add this to show the prize pool
+  prizePool: string; // Add this to show the prize pool
   timeRemaining: number; // Add this to show time remaining
 }
+
 
 const BuyTicket: React.FC<BuyTicketProps> = ({
   handleClose,

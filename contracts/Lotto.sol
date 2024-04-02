@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 contract Lotto649 {
     address public owner;
-    uint256 public ticketPrice = 1 ether;
+    uint256 public ticketPrice = 0.001 ether;
     uint256 public startTimestamp;  // blockchain timestamp
     uint256 public lotteStartTimestamp; // start time of the current ACTIVE lotto
     uint256 public constant WEEK_DURATION = 1 weeks;
