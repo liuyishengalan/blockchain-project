@@ -15,6 +15,7 @@ import BuyTicket from './BuyTicket';
 import AdminLogin from './AdminLogin';
 import HowItWorks from './HowItWorks';
 import CheckResults from './CheckResults';
+import { useLottoContract } from '../api/useContract'; // Adjust the import path as needed
 
 const modalStyle = {
   backgroundColor: 'white',
@@ -38,26 +39,33 @@ export function Lotto(): ReactElement {
   const [openCheckResultsModal, setOpenCheckResultsModal] = useState(false);
   const [openHowItWorksModal, setOpenHowItWorksModal] = useState(false);
   const [winningNumbers, setWinningNumbers] = useState<number[]>([]);
-
+  const [latestWinningWeek, setLatestWinningWeek] = useState<number>();
   // dummy data for the prize pool and time remaining
   const prizePool = "50"; // Replace with actual logic to get prize pool from contract
   const timeRemaining = "7"; // Replace with actual logic to get time remaining
 
-  useEffect((): void => {
-    if (!library) return;
-    const signer = library.getSigner();
-    setSigner(signer);
-  }, [library]);
+  const { fetchWinningNumbers, fetchCurrentWeek } = useLottoContract(contractAddress, library);
 
-  useEffect((): void => {
-    if (!signer) return;
-    const lottoContract = new Contract(
-      lottoContractAddr,
-      LottoArtifact.abi,
-      signer
-    );
-    setLottoContract(lottoContract);
-  }, [signer, lottoContractAddr]);
+  useEffect(() => {
+    if (!library) {
+      console.log('Web3React library not initialized');
+      return;
+    }
+    const getNumbers = async () => {
+      const numbers = await fetchWinningNumbers();
+      if (numbers) setWinningNumbers(numbers);
+    };
+
+    const getWeek = async () => {
+      const week = await fetchCurrentWeek();
+      // convert the big number to a number
+      if (week) setLatestWinningWeek(week - 1);
+    }
+
+    getNumbers();
+    getWeek();
+  }, [library, fetchWinningNumbers, fetchCurrentWeek]);
+
 
   const handleConnectWallet = useCallback(async () => {
     // Since we're inside a callback, we don't use the hook here, 
@@ -69,26 +77,6 @@ export function Lotto(): ReactElement {
       console.error('Error on connecting to MetaMask:', error);
     }
   }, [activate]); // Depend on the activate function
-  const fetchWinningNumbers = useCallback(async () => {
-    if (!lottoContract) return;
-  
-    try {
-      const winningNums = await lottoContract.getWinningNumsForCurrentWeek();
-      // Assume winningNums is an array of BigNumber and convert accordingly
-      setWinningNumbers(winningNums);
-    } catch (error) {
-      console.error("Failed to fetch winning numbers:", error);
-    }
-  }, [lottoContract]); // Depends on lottoContract
-
-  
-  useEffect(() => {
-    // This function is called automatically when lottoContract is set
-    fetchWinningNumbers();
-  }, [fetchWinningNumbers]); 
-  
-// Wrapped in useCallback to ensure it doesn't change unless necessary
-
   
   const handleBuyTicket = () => {
     setOpenBuyTicketModal(true);
@@ -160,7 +148,7 @@ export function Lotto(): ReactElement {
         <Box mt={4}>
           <Typography variant="h6">Winning Numbers:</Typography>
           <Typography variant="subtitle1" gutterBottom>
-            Saturday, March 23, 2024
+            Last Week: Round {latestWinningWeek}
           </Typography>
           <Grid container spacing={2} justifyContent="center">
           {winningNumbers.map((number, index) => (
