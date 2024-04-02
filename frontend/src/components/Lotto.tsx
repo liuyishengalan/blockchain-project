@@ -17,18 +17,9 @@ import HowItWorks from './HowItWorks';
 import CheckResults from './CheckResults';
 import { useLottoContract } from '../api/useContract'; // Adjust the import path as needed
 import eth_logo from '../assets/eth.gif';
+import { modalStyle } from '../styles/styles';
 
-const modalStyle = {
-  backgroundColor: 'white',
-  padding: '1em',
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  maxWidth: '80vw',
-  maxHeight: '80vh',
-  overflow: 'auto',
-};
+
 const contractAddress = '0xc00836153077ed37cCE659098Ed10c8f10b39C9c';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
