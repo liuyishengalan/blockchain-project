@@ -40,11 +40,12 @@ export function Lotto(): ReactElement {
   const [openHowItWorksModal, setOpenHowItWorksModal] = useState(false);
   const [winningNumbers, setWinningNumbers] = useState<number[]>([]);
   const [latestWinningWeek, setLatestWinningWeek] = useState<number>();
-  // dummy data for the prize pool and time remaining
-  const prizePool = "50"; // Replace with actual logic to get prize pool from contract
-  const timeRemaining = "7"; // Replace with actual logic to get time remaining
+  const [currentWeek, setCurrentWeek] = useState<number>();
+  const [prizePool, setPrizePool] = useState<number>();
 
-  const { fetchWinningNumbers, fetchCurrentWeek } = useLottoContract(contractAddress, library);
+  const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool } = useLottoContract(contractAddress, library);
+  // check how many days are left for the current round to end (winning number released on Wednesday)
+  const daysLeft = 3 - new Date().getDay();
 
   useEffect(() => {
     if (!library) {
@@ -59,12 +60,21 @@ export function Lotto(): ReactElement {
     const getWeek = async () => {
       const week = await fetchCurrentWeek();
       // convert the big number to a number
-      if (week) setLatestWinningWeek(week - 1);
+      if (week) {
+        setLatestWinningWeek(week - 1);
+        setCurrentWeek(week);
+      }
+    }
+
+    const getPrizePool = async () => {
+      const prizePool = await fetchPrizePool();
+      if (prizePool) setPrizePool(prizePool);
     }
 
     getNumbers();
     getWeek();
-  }, [library, fetchWinningNumbers, fetchCurrentWeek]);
+    getPrizePool();
+  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool]);
 
 
   const handleConnectWallet = useCallback(async () => {
@@ -139,8 +149,9 @@ export function Lotto(): ReactElement {
             <BuyTicket
               handleClose={handleCloseBuyTicketModal}
               handlePurchase={handlePurchase}
-              prizePool={prizePool}
-              timeRemaining={timeRemaining}
+              currentWeek={currentWeek || 0} // Provide a default value for currentWeek
+              prizePool={prizePool || 0}
+              timeRemaining={daysLeft}
             />
             </div>
           </Modal>

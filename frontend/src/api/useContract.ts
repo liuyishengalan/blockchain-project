@@ -2,7 +2,6 @@ import { Contract } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
 
-// Define a hook to encapsulate contract logic
 export function useLottoContract(lottoContractAddress: string, provider: Web3Provider) {
     let lottoContract: Contract | undefined;
 
@@ -47,7 +46,21 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
             return;
         }
     };
-    
+
+    const fetchPrizePool = async (): Promise<number | undefined> => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+
+        try {
+            const prizePool = await lottoContract.getPotSize();
+            return prizePool.toNumber();
+        } catch (error) {
+            console.error("Failed to fetch prize pool:", error);
+            return;
+        }
+    }
 
     // Initialize contract upon hook call
     initializeContract();
@@ -55,5 +68,6 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     return {
         fetchWinningNumbers,
         fetchCurrentWeek,
+        fetchPrizePool,
     };
 }

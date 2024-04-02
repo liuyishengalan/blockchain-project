@@ -4,13 +4,15 @@ import { Button, TextField, Box, Typography } from '@mui/material';
 interface BuyTicketProps {
   handleClose: () => void;
   handlePurchase: (numbers: number[]) => void; // Add this to handle the purchase
-  prizePool: string; // Add this to show the prize pool
-  timeRemaining: string; // Add this to show time remaining
+  currentWeek: number; // Add this to show the current week
+  prizePool: number; // Add this to show the prize pool
+  timeRemaining: number; // Add this to show time remaining
 }
 
 const BuyTicket: React.FC<BuyTicketProps> = ({
   handleClose,
   handlePurchase,
+  currentWeek,
   prizePool,
   timeRemaining,
 }) => {
@@ -36,7 +38,7 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
       <Box display="flex" justifyContent="center">
         <Box>
           <Typography variant="h5" component="h1" gutterBottom >
-            Current Lottery Round
+            Current Lottery Round #{currentWeek}
           </Typography>
           <Typography variant="subtitle1" gutterBottom>
             Total Prize Pool: {prizePool} Ethers
