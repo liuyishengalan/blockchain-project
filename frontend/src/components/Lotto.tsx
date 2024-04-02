@@ -16,6 +16,7 @@ import AdminLogin from './AdminLogin';
 import HowItWorks from './HowItWorks';
 import CheckResults from './CheckResults';
 import { useLottoContract } from '../api/useContract'; // Adjust the import path as needed
+import eth_logo from '../assets/eth.gif';
 
 const modalStyle = {
   backgroundColor: 'white',
@@ -125,99 +126,119 @@ export function Lotto(): ReactElement {
     requestBuyTicket(ticketNumbers);
 
   };
-
-  return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4, textAlign: 'center' }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Lotto 6/49 on Blockchain
-        </Typography>
-
-        <Box>
-          <Button variant="contained" onClick={handleConnectWallet}>
-            {active ? 'Connected' : 'Connect to Metamask'}
-          </Button>
-          <Button variant="outlined" onClick={handleBuyTicket} sx={{ ml: 2 }}>
-            Buy a Ticket
-          </Button>
-          <Modal
-            open={openBuyTicketModal}
-            onClose={handleCloseBuyTicketModal}
-            aria-labelledby="buy-ticket-modal-title"
-            aria-describedby="buy-ticket-modal-description"
-          >
-            <div style={modalStyle as React.CSSProperties}>
-            <BuyTicket
-              handleClose={handleCloseBuyTicketModal}
-              handlePurchase={handlePurchase}
-              currentWeek={currentWeek || 0} // Provide a default value for currentWeek
-              prizePool={prizePool || ''}
-              timeRemaining={daysLeft}
-            />
-            </div>
-          </Modal>
-        </Box>
-        <Box mt={4}>
-          <Typography variant="h6">Winning Numbers:</Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Last Week: Round {latestWinningWeek}
+  if (active) {
+    return (
+      <Container maxWidth="sm">
+        <Box sx={{ my: 4, textAlign: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Lotto 6/49 on Blockchain
           </Typography>
-          <Grid container spacing={2} justifyContent="center">
-          {winningNumbers.map((number, index) => (
-            <Grid key={index} item>
-              <Paper elevation={4} sx={{ p: 1, width: '2rem', textAlign: 'center' }}>
-                {number}
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-
+  
+          <Box>
+            <Button variant="contained" onClick={handleConnectWallet}>
+              {active ? 'Connected' : 'Connect to Metamask'}
+            </Button>
+            <Button variant="outlined" onClick={handleBuyTicket} sx={{ ml: 2 }}>
+              Buy a Ticket
+            </Button>
+            <Modal
+              open={openBuyTicketModal}
+              onClose={handleCloseBuyTicketModal}
+              aria-labelledby="buy-ticket-modal-title"
+              aria-describedby="buy-ticket-modal-description"
+            >
+              <div style={modalStyle as React.CSSProperties}>
+              <BuyTicket
+                handleClose={handleCloseBuyTicketModal}
+                handlePurchase={handlePurchase}
+                currentWeek={currentWeek || 0} // Provide a default value for currentWeek
+                prizePool={prizePool || ''}
+                timeRemaining={daysLeft}
+              />
+              </div>
+            </Modal>
+          </Box>
+          <Box mt={4}>
+            <Typography variant="h6">Winning Numbers:</Typography>
+            <Typography variant="subtitle1" gutterBottom>
+              Last Week: Round {latestWinningWeek}
+            </Typography>
+            <Grid container spacing={2} justifyContent="center">
+            {winningNumbers.map((number, index) => (
+              <Grid key={index} item>
+                <Paper elevation={4} sx={{ p: 1, width: '2rem', textAlign: 'center' }}>
+                  {number}
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+  
+          </Box>
+          <Box mt={4}>
+            <Button variant="text" onClick={handleCheckResults}>
+              Check Results
+            </Button>
+            <Modal
+              open={openCheckResultsModal}
+              onClose={handleCloseCheckResultsModal}
+              aria-labelledby="check-results-modal-title"
+              aria-describedby="check-results-modal-description"
+            >
+              <div style={modalStyle as React.CSSProperties}>
+                <CheckResults handleClose={handleCloseCheckResultsModal} />
+              </div>
+            </Modal>
+            <Button variant="text" onClick={handleHowItWorks} sx={{ ml: 2 }}>
+              How It works
+            </Button>
+            <Modal
+              open={openHowItWorksModal}
+              onClose={handleCloseHowItWorksModal}
+              aria-labelledby="how-it-works-modal-title"
+              aria-describedby="how-it-works-modal-description"
+            >
+              <div style={modalStyle as React.CSSProperties}>
+                <HowItWorks handleClose={handleCloseHowItWorksModal} />
+              </div>
+            </Modal>
+          </Box>
+          {/* The Admin Login button can be an IconButton or a simple Button as per your design */}
+          <Box mt={2} display="flex" justifyContent="flex-end">
+            <Button variant="text" onClick={handleAdminLogin} sx={{ ml: 2 }}>
+              Admin Login 
+            </Button>
+            <Modal
+              open={openAdminLoginModal}
+              onClose={handleCloseAdminLoginModal}
+              aria-labelledby="admin-login-modal-title"
+              aria-describedby="admin-login-modal-description"
+            >
+              <div style={modalStyle as React.CSSProperties}>
+                <AdminLogin handleClose={handleCloseAdminLoginModal} />
+              </div>
+            </Modal>
+          </Box>
         </Box>
-        <Box mt={4}>
-          <Button variant="text" onClick={handleCheckResults}>
-            Check Results
-          </Button>
-          <Modal
-            open={openCheckResultsModal}
-            onClose={handleCloseCheckResultsModal}
-            aria-labelledby="check-results-modal-title"
-            aria-describedby="check-results-modal-description"
-          >
-            <div style={modalStyle as React.CSSProperties}>
-              <CheckResults handleClose={handleCloseCheckResultsModal} />
-            </div>
-          </Modal>
-          <Button variant="text" onClick={handleHowItWorks} sx={{ ml: 2 }}>
-            How It works
-          </Button>
-          <Modal
-            open={openHowItWorksModal}
-            onClose={handleCloseHowItWorksModal}
-            aria-labelledby="how-it-works-modal-title"
-            aria-describedby="how-it-works-modal-description"
-          >
-            <div style={modalStyle as React.CSSProperties}>
-              <HowItWorks handleClose={handleCloseHowItWorksModal} />
-            </div>
-          </Modal>
+      </Container>
+    );
+  } else {
+    return (
+      <Container maxWidth="sm">
+        <Box sx={{ my: 4, textAlign: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Lotto 6/49 on Blockchain
+          </Typography>
+          <img src={eth_logo} alt="Ethereum Logo" style={{ width: '300px', height: '300px', marginBottom: '20px'}}/>
+          <Box>
+            <Button variant="contained" onClick={handleConnectWallet}>
+              Connect to Metamask
+            </Button>
+          </Box>
         </Box>
-        {/* The Admin Login button can be an IconButton or a simple Button as per your design */}
-        <Box mt={2} display="flex" justifyContent="flex-end">
-          <Button variant="text" onClick={handleAdminLogin} sx={{ ml: 2 }}>
-            Admin Login 
-          </Button>
-          <Modal
-            open={openAdminLoginModal}
-            onClose={handleCloseAdminLoginModal}
-            aria-labelledby="admin-login-modal-title"
-            aria-describedby="admin-login-modal-description"
-          >
-            <div style={modalStyle as React.CSSProperties}>
-              <AdminLogin handleClose={handleCloseAdminLoginModal} />
-            </div>
-          </Modal>
-        </Box>
-      </Box>
-    </Container>
-  );
+        
+      </Container>
+      
+    );
+  }
+  
 }
