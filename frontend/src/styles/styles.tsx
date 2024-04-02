@@ -9,4 +9,5 @@ export const modalStyle = {
     maxWidth: '80vw',
     maxHeight: '80vh',
     overflow: 'auto',
-  };
+    borderRadius: '10px',
+};

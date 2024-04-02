@@ -129,7 +129,7 @@ export function Lotto(): ReactElement {
   };
   if (active) {
     return (
-      <Container maxWidth="sm" className={shouldAnimate ? 'fade-in' : ''}>
+      <Container maxWidth="md" className={shouldAnimate ? 'fade-in' : ''}>
         <Box sx={{ my: 4, textAlign: 'center' }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Lotto 6/49 on Blockchain
@@ -224,7 +224,7 @@ export function Lotto(): ReactElement {
     );
   } else {
     return (
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
         <Box sx={{ my: 4, textAlign: 'center' }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Lotto 6/49 on Blockchain
