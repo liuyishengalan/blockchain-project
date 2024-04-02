@@ -4,8 +4,8 @@ Deploy this contract on Sepolia
 
 Remember to create a `.env` file with the following content:
 ```shell
-SEPOLIA_API_URL = "https://eth-sepolia.g.alchemy.com/v2/TBcmuWUU_TiijYWRaoNwlG49EtZsMyd4"
-SEPOLIA_PRIVATE_KEY = 'THE-PRIVATE-KEY'
+SEPOLIA_API_URL = "https://eth-sepolia.g.alchemy.com/v2/[THE-API-KEY]"
+SEPOLIA_PRIVATE_KEY = 'METAMASK-PRIVATE-KEY'
 ```
 Next, run the following commands:
 ```shell
