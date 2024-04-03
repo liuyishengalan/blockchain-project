@@ -16,6 +16,8 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
   currentWeek,
   prizePool,
   timeRemaining,
+
+  // TODO CHRIS 
 }) => {
   const [numbers, setNumbers] = useState(Array(6).fill(''));
 
@@ -29,6 +31,7 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
     const numericNumbers = numbers.map(Number); // Convert to numbers
     // TODO: Validate the numbers before purchasing
     handlePurchase(numericNumbers);
+    window.alert('Please wait to confirm your Lotto purchased in your wallet');
   };
 
   return (
