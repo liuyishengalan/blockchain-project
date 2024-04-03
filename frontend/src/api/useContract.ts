@@ -79,6 +79,34 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
             console.error("Failed to purchase ticket:", error);
         }
     };
+
+    const requestGenerateWinningNumbers = async () => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+    
+        try {
+            await lottoContract.generateWinningNumbers();
+            console.log("Winning numbers generated successfully");
+        } catch (error) {
+            console.error("Failed to generate winning numbers:", error);
+        }
+    }
+
+    const requestannounceWinners = async () => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+    
+        try {
+            await lottoContract.announceWinners();
+            console.log("announce winners successfully");
+        } catch (error) {
+            console.error("Failed to announce winners:", error);
+        }
+    }
     
 
     // Initialize contract upon hook call
@@ -89,5 +117,6 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         fetchCurrentWeek,
         fetchPrizePool,
         requestBuyTicket,
+        requestGenerateWinningNumbers
     };
 }

@@ -36,7 +36,7 @@ export function Lotto(): ReactElement {
   const [prizePool, setPrizePool] = useState<string>();
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
-  const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestBuyTicket } = useLottoContract(contractAddress, library);
+  const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestBuyTicket, requestGenerateWinningNumbers } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)
   const daysLeft = 3 - new Date().getDay();
 
@@ -63,6 +63,7 @@ export function Lotto(): ReactElement {
       const prizePool = await fetchPrizePool();
       if (prizePool) setPrizePool(prizePool);
     }
+
 
     getNumbers();
     getWeek();
@@ -125,8 +126,14 @@ export function Lotto(): ReactElement {
   const handlePurchase = (ticketNumbers: number[]) => {
     console.log('Purchasing ticket with numbers: ', ticketNumbers);
     requestBuyTicket(ticketNumbers);
-
   };
+
+  const handleGenerateWinningNumbers = () => {
+    console.log('request for generating winning numbers sent!');
+    requestGenerateWinningNumbers();
+    fetchWinningNumbers();
+  }
+
   if (active) {
     return (
       <Container maxWidth="md" className={shouldAnimate ? 'fade-in' : ''}>
@@ -172,7 +179,7 @@ export function Lotto(): ReactElement {
                 </Paper>
               </Grid>
             ))}
-          </Grid>
+            </Grid>
   
           </Box>
           <Box mt={4}>
@@ -215,7 +222,13 @@ export function Lotto(): ReactElement {
               aria-describedby="admin-login-modal-description"
             >
               <div style={modalStyle as React.CSSProperties}>
-                <AdminLogin handleClose={handleCloseAdminLoginModal} />
+                <AdminLogin 
+                  handleClose={handleCloseAdminLoginModal}
+                  handleGenerateRequest={handleGenerateWinningNumbers}
+                  generatedWinningNumbers={winningNumbers}
+                  prizePool={prizePool || ''}
+                  timeRemaining={daysLeft}
+                />
               </div>
             </Modal>
           </Box>
