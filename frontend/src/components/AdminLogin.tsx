@@ -98,7 +98,9 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           {showWinners && (
             <div style={{ marginTop: '10px' }}>
               {winners.length === 0 ? (
-                <div>Unfortunately, No winners ☹️</div>
+                <Typography variant="body1" style={{ color: '#777' }}>
+                Unfortunately, No winners <span role="img" aria-label="sad">☹️</span>
+                </Typography>
               ) : (
                 winners.map((item, index) => (
                   <div key={index}>{item}</div>
