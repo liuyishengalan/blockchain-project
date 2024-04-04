@@ -39,16 +39,69 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
 
 
   return (
+
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="h4" align="center">
+        Admin Page
+        </Typography>
+      </Grid>
       {/* Left column */}
       <Grid item xs={6}>
-        {/* Content for the left column */}
-        Left Column
+        <Box marginLeft={10} marginRight={10} marginTop={5}>
+
+        <Typography variant='overline'> Current Pool Info </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          Total Prize Pool: {prizePool} Ethers
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Time Remaining: {timeRemaining} Days
+        </Typography>
+
+        </Box>
       </Grid>
       {/* Right column */}
       <Grid item xs={6}>
-        {/* Content for the right column */}
-        Right Column
+        <div style={{ display: 'flex' }}>
+          {winningNumbers.map((number, index) => (
+            <div
+              key={index}
+              style={{
+                width: '50px',
+                height: '50px',
+                border: '1px solid blue',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: '10px'
+              }}
+            >
+              {number}
+            </div>
+          ))}
+        </div>
+
+        <Box display="flex" justifyContent="center" marginTop={5}>
+          <Button variant="contained" onClick={handleWinningNumbers}>
+          Generate Winning Numbers
+          </Button>
+        </Box>
+        
+        <div>
+          {winners.map((item, index) => (
+            <div key={index}>{item}</div>
+          ))}
+        </div>
+
+        <Box display="flex" justifyContent="center" marginTop={5}>
+          <Button variant="contained" onClick={handleShowWinners}>
+          Show Winners
+          </Button>
+        </Box>
+      </Grid>
+      <Grid item xs={12} container justifyContent="flex-end">
+        <Button onClick={handleClose}>Close</Button>
       </Grid>
     </Grid>
     
