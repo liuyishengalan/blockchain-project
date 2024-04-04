@@ -18,6 +18,8 @@ import CheckResults from './CheckResults';
 import { useLottoContract } from '../api/useContract'; // Adjust the import path as needed
 import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
+import { get } from 'http';
+import io from 'socket.io-client';
 
 
 const contractAddress = '0xc00836153077ed37cCE659098Ed10c8f10b39C9c';
@@ -35,8 +37,14 @@ export function Lotto(): ReactElement {
   const [currentWeek, setCurrentWeek] = useState<number>();
   const [prizePool, setPrizePool] = useState<string>();
   const [shouldAnimate, setShouldAnimate] = useState(false);
-
-  const { fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestBuyTicket, requestGenerateWinningNumbers } = useLottoContract(contractAddress, library);
+  const [winners, setWinners] = useState<string[]>([]);
+  const { 
+    fetchWinningNumbers, 
+    fetchCurrentWeek, 
+    fetchPrizePool, 
+    requestBuyTicket, 
+    requestGenerateWinningNumbers,
+    fetchAnnounceWinnersandPrize } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)
   const daysLeft = 3 - new Date().getDay();
 
@@ -64,11 +72,17 @@ export function Lotto(): ReactElement {
       if (prizePool) setPrizePool(prizePool);
     }
 
+    const getWinners = async () => {
+      const winners = await fetchAnnounceWinnersandPrize();
+      if (winners) setWinners(winners);
+    }
 
     getNumbers();
     getWeek();
     getPrizePool();
-  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool]);
+    getWinners();
+  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, winners]);
+
 
   useEffect(() => {
     if (active) {
@@ -78,6 +92,7 @@ export function Lotto(): ReactElement {
       return () => clearTimeout(timer);
     }
   }, [active]);
+
 
 
   const handleConnectWallet = useCallback(async () => {
@@ -133,6 +148,7 @@ export function Lotto(): ReactElement {
     requestGenerateWinningNumbers();
     fetchWinningNumbers();
   }
+
 
   if (active) {
     return (
@@ -226,6 +242,7 @@ export function Lotto(): ReactElement {
                   handleClose={handleCloseAdminLoginModal}
                   handleGenerateRequest={handleGenerateWinningNumbers}
                   generatedWinningNumbers={winningNumbers}
+                  winners = {winners}
                   prizePool={prizePool || ''}
                   timeRemaining={daysLeft}
                 />

@@ -5,6 +5,7 @@ interface AdminLoginProps {
   handleClose: () => void;
   handleGenerateRequest: () => void;
   generatedWinningNumbers: number[] ;
+  winners: string[];
   prizePool: string; 
   timeRemaining: number; 
 }
@@ -25,11 +26,13 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   handleClose, 
   handleGenerateRequest,
   generatedWinningNumbers, 
+  winners,
   prizePool, 
   timeRemaining
  }) => {
   // State to store the winning numbers
   const [winningNumbers, setWinningNumbers] = React.useState<number[]>([]);
+  const [winnersAdd, setWinnersAdd] = React.useState<string[]>([]);
 
   // Function to fetch the winning numbers
   const handleWinningNumbers = async () => {
@@ -38,6 +41,11 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     const numbers = generatedWinningNumbers;
     if (numbers) setWinningNumbers(numbers);
   };
+
+  const handleShowWinners = async () => {
+    const winners = winnersAdd;
+    if (winners) setWinnersAdd(winners);
+  }
 
 
   return (
@@ -113,6 +121,19 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         <Box display="flex" justifyContent="center" marginTop={2}>
           <Button variant="contained" onClick={handleWinningNumbers}>
           Generate Winning Numbers
+          </Button>
+        </Box>
+        
+        <div>
+          {/* Render each item in the list */}
+          {winners.map((item, index) => (
+            <div key={index}>{item}</div>
+          ))}
+        </div>
+
+        <Box display="flex" justifyContent="center" marginTop={2}>
+          <Button variant="contained" onClick={handleShowWinners}>
+          Show Winners
           </Button>
         </Box>
         

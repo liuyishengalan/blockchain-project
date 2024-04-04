@@ -94,7 +94,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         }
     }
 
-    const requestannounceWinners = async () => {
+    const fetchAnnounceWinnersandPrize = async () => {
         if (!lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
@@ -102,7 +102,9 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     
         try {
             await lottoContract.announceWinners();
+            const tx= await lottoContract.getMywinnerForCurrentWeek();
             console.log("announce winners successfully");
+            return tx;
         } catch (error) {
             console.error("Failed to announce winners:", error);
         }
@@ -117,6 +119,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         fetchCurrentWeek,
         fetchPrizePool,
         requestBuyTicket,
-        requestGenerateWinningNumbers
+        requestGenerateWinningNumbers,
+        fetchAnnounceWinnersandPrize
     };
 }
