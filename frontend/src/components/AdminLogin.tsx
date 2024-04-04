@@ -8,6 +8,7 @@ interface AdminLoginProps {
   winners: string[];
   prizePool: string; 
   timeRemaining: number; 
+  requestNewLottoRound: () => Promise<boolean | undefined>;
 }
 
 
@@ -18,12 +19,15 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   generatedWinningNumbers, 
   winners,
   prizePool, 
-  timeRemaining
+  timeRemaining,
+  requestNewLottoRound,
  }) => {
   // State to store the winning numbers
   const [winningNumbers, setWinningNumbers] = React.useState<number[]>([]);
   const [winnersAdd, setWinnersAdd] = React.useState<string[]>([]);
   const [showWinners, setShowWinners] = React.useState(false);
+  // const [initResult, setinitResult] = React.useState<string>();
+
 
   // Function to fetch the winning numbers
   const handleWinningNumbers = async () => {
@@ -37,6 +41,10 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     setShowWinners(true);
     const winners = winnersAdd;
     if (winners) setWinnersAdd(winners);
+  }
+
+  const handleNewLottoRound = async () => {
+    requestNewLottoRound();
   }
 
   return (
@@ -84,7 +92,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         </div>
 
         <Box display="flex" justifyContent="center" marginTop={5}>
-          <Button variant="contained" onClick={handleWinningNumbers}>
+          <Button variant="contained" onClick={handleWinningNumbers} style={{ width: '300px' }}>
           Generate Winning Numbers
           </Button>
         </Box>
@@ -92,7 +100,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
 
         <Box display="flex" justifyContent="center" marginTop={5}>
         <div>
-          <Button variant="contained" onClick={handleShowWinners}>
+          <Button variant="contained" onClick={handleShowWinners} style={{ width: '300px' }}>
             Show Winners
           </Button>
           {showWinners && (
@@ -110,9 +118,14 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           )}
         </div>
         </Box>
+
+      <Box display="flex" justifyContent="center" marginTop={5}>
+        <Button variant="contained" onClick={handleNewLottoRound} style={{ width: '300px' }}> Initialize New Lotto Round</Button>
+      </Box>
+
       </Grid>
       <Grid item xs={12} container justifyContent="flex-end">
-        <Button onClick={handleClose}>Close</Button>
+        <Button onClick={handleClose} >Close</Button>
 
       </Grid>
     </Grid>

@@ -109,6 +109,22 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
             console.error("Failed to announce winners:", error);
         }
     }
+
+    const requestNewLottoRound = async (): Promise<boolean|undefined> => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return; 
+        }
+    
+        try {
+            const result = await lottoContract.initializeNewLotto();
+            console.log("New round started successfully");
+            return  !!result;
+        } catch (error) {
+            console.error("Failed to start new round:", error);
+            return;
+        }
+    }
     
 
     // Initialize contract upon hook call
@@ -120,6 +136,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         fetchPrizePool,
         requestBuyTicket,
         requestGenerateWinningNumbers,
-        fetchAnnounceWinnersandPrize
+        fetchAnnounceWinnersandPrize,
+        requestNewLottoRound
     };
 }

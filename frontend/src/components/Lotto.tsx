@@ -38,13 +38,15 @@ export function Lotto(): ReactElement {
   const [prizePool, setPrizePool] = useState<string>();
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [winners, setWinners] = useState<string[]>([]);
+  
   const { 
     fetchWinningNumbers, 
     fetchCurrentWeek, 
     fetchPrizePool, 
     requestBuyTicket, 
     requestGenerateWinningNumbers,
-    fetchAnnounceWinnersandPrize } = useLottoContract(contractAddress, library);
+    fetchAnnounceWinnersandPrize,
+    requestNewLottoRound } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)
   const daysLeft = 3 - new Date().getDay();
 
@@ -71,8 +73,6 @@ export function Lotto(): ReactElement {
       const prizePool = await fetchPrizePool();
       if (prizePool) setPrizePool(prizePool);
     }
-
-
 
     getNumbers();
     getWeek();
@@ -249,6 +249,7 @@ export function Lotto(): ReactElement {
                   winners = {winners}
                   prizePool={prizePool || ''}
                   timeRemaining={daysLeft}
+                  requestNewLottoRound={requestNewLottoRound}
                 />
               </div>
             </Modal>
