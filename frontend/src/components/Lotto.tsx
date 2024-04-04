@@ -20,9 +20,21 @@ import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
 import io from 'socket.io-client';
+import TicketDropdown from './TicketDropdown';
+
+interface WinnerInfo {
+  winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
+  matchCount: number;
+  numbers: number[]; // uint8[6] in Solidity can be represented as number[] in TypeScript for simplicity
+}
 
 
-const contractAddress = '0xc00836153077ed37cCE659098Ed10c8f10b39C9c';
+interface MyTicketInfo {
+  numbers: number[];
+  prize: number;
+}
+
+const contractAddress = '0x75f33c8c28685E28198D8ACeA289dBC93C066ddc';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
   const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
@@ -37,8 +49,11 @@ export function Lotto(): ReactElement {
   const [currentWeek, setCurrentWeek] = useState<number>();
   const [prizePool, setPrizePool] = useState<string>();
   const [shouldAnimate, setShouldAnimate] = useState(false);
-  const [winners, setWinners] = useState<string[]>([]);
+  const [userRecentTicket, setUserTicket] = useState<MyTicketInfo[]>([]);
+  const [recentWinner, setWinnerrs] = useState<WinnerInfo[]>([]);
+   const [winners, setWinners] = useState<string[]>([]);
   
+
   const { 
     fetchWinningNumbers, 
     fetchCurrentWeek, 
@@ -46,8 +61,8 @@ export function Lotto(): ReactElement {
     requestBuyTicket, 
     requestGenerateWinningNumbers,
     fetchAnnounceWinnersandPrize,
-    requestNewLottoRound } = useLottoContract(contractAddress, library);
-  // check how many days are left for the current round to end (winning number released on Wednesday)
+    requestNewLottoRound, fetchWinners,fetchTicket} = useLottoContract(contractAddress, library);
+  // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay();
 
   useEffect(() => {
@@ -74,19 +89,26 @@ export function Lotto(): ReactElement {
       if (prizePool) setPrizePool(prizePool);
     }
 
+    const getfetchTicket = async () => {
+      const  tickectt = await fetchTicket();
+      if (tickectt) setUserTicket(tickectt);
+    }
+
+    const getfetchWinner = async () => {
+      const winner = await fetchWinners();
+      if (winner) {
+        setWinnerrs(winner);
+        //console.log(winner);
+    }
+  }
+   
     getNumbers();
     getWeek();
     getPrizePool();
-    
-  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestNewLottoRound]);
+    getfetchTicket();
+    getfetchWinner();
 
-  useEffect(() => {
-    const getWinners = async () => {
-      const winners = await fetchAnnounceWinnersandPrize();
-      if (winners) setWinners(winners);
-    }
-    getWinners();
-  }, [winners]);
+  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool,requestNewLottoRound,fetchWinners,fetchTicket]); //fetchWinners
 
   useEffect(() => {
     if (active) {
@@ -154,6 +176,7 @@ export function Lotto(): ReactElement {
   }
 
 
+
   if (active) {
     return (
       <Container maxWidth="md" className={shouldAnimate ? 'fade-in' : ''}>
@@ -213,7 +236,14 @@ export function Lotto(): ReactElement {
               aria-describedby="check-results-modal-description"
             >
               <div style={modalStyle as React.CSSProperties}>
-                <CheckResults handleClose={handleCloseCheckResultsModal} />
+             
+              <CheckResults
+               handleClose={handleCloseCheckResultsModal} 
+               currentWeek={currentWeek || 0}
+               recentWinner={recentWinner}
+               userRecentTicket = {userRecentTicket}
+               />
+              
               </div>
             </Modal>
             <Button variant="text" onClick={handleHowItWorks} sx={{ ml: 2 }}>

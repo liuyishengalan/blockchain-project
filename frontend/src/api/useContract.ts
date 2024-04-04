@@ -1,7 +1,17 @@
 import { Contract, ethers } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
+import { textChangeRangeIsUnchanged } from 'typescript';
+interface WinnerInfo {
+    winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
+    matchCount: number;
+    numbers: number[]; // uint8[6] in Solidity can be represented as number[] in TypeScript for simplicity
+  }
 
+interface MyTicketInfo {
+    numbers: number[];
+    prize: number;
+}
 export function useLottoContract(lottoContractAddress: string, provider: Web3Provider) {
     let lottoContract: Contract | undefined;
 
@@ -59,6 +69,43 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
             return prizePool_ether;
         } catch (error) {
             console.error("Failed to fetch prize pool:", error);
+            return;
+        }
+    }
+
+    const fetchTicket = async (): Promise<MyTicketInfo[] | undefined> => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+
+        try {
+            const testnum = await lottoContract.getMyTicketsForCertainWeek();
+            //console.log(testnum);
+            //const testnu = [1,2,3];
+            return testnum;
+        } catch (error) {
+            console.error("Failed to fetch user ticket:", error);
+            return;
+        }
+    }
+
+
+    const fetchWinners = async (): Promise<WinnerInfo[] | undefined>=> {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+       
+        try {
+            const winners = await lottoContract.getMywinnerForCertainWeek();
+            // if (!winners || winners.length === 0) {
+            //     console.log("No winners found for the current week");
+            //     return [];
+            // }
+            return winners;
+        } catch (error) {
+            console.error("Failed to fetch recent winners:", error);
             return;
         }
     }
@@ -137,6 +184,9 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         requestBuyTicket,
         requestGenerateWinningNumbers,
         fetchAnnounceWinnersandPrize,
-        requestNewLottoRound
+        requestNewLottoRound,
+        fetchWinners,
+        fetchTicket,
+        
     };
 }

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+
+
 contract Lotto649 {
     address public owner;
     uint256 public ticketPrice = 0.001 ether;
@@ -25,13 +27,21 @@ contract Lotto649 {
     struct WinnerInfo {
         address winner;
         uint256 matchCount;
+        uint8[6] numbers;
     }
+    
+    struct MyTicketInfo {
+        uint8[6] numbers;
+        uint8 prize;
+    }
+    
 
     mapping(uint256 => uint256[]) public lottoPoolByWeek;
     mapping(uint256 => Ticket[]) public ticketsByWeek;
     mapping(address => uint256) public winnings;
     mapping(uint256 => WinnerInfo[]) public winnersByWeek;
     mapping(uint256 => uint8[6]) private winningNumbers;
+    mapping(uint256 => MyTicketInfo[]) public myTicket;
 
     event TicketPurchased(address indexed buyer, uint256 week, uint8[6] numbers);
     event WinnersAnnounced(uint256 week, uint8[6] winningNumbers, uint256[4] prizeAmounts);
@@ -113,11 +123,15 @@ contract Lotto649 {
             //         break;
             //     }
             // }
-            
+            if(ticketsByWeek[currentWeek][i].entrant == msg.sender){
+                myTicket[currentWeek].push(MyTicketInfo(ticketsByWeek[currentWeek][i].numbers,uint8(matchCount)));
+            }
+
+
             if (matchCount >= 3) {
                 uint256 prizeIndex = matchCount - 3; // Indexing into the winningPrizes and winnerCounts arrays
                 winnerCounts[prizeIndex]++;
-                winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount));
+                winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount,ticketsByWeek[currentWeek][i].numbers));
             }
 
         pot = 0; // Reset pot for the next round
@@ -212,16 +226,99 @@ contract Lotto649 {
 
     function getMywinnerForCurrentWeek() external view returns (WinnerInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
-        //uint256 wCount = 0;
+        uint256 wCount = 0;
         WinnerInfo[] memory mywinner = new WinnerInfo[](winnersByWeek[currentWeek].length);
 
         for (uint256 i = 0; i < winnersByWeek[currentWeek].length; i++) {
             mywinner[i] = (winnersByWeek[currentWeek][i]);
         }
-        
+
         return mywinner;
     }
+    
+    function getMywinnerForCertainWeek() external view returns (WinnerInfo[] memory) {
+        // address addr1 = msg.sender;
+        // uint8[6] memory numbers = [1, 2, 3, 4, 5, 6];
+        // uint256 numWinners = 5; // Adjust this as needed
 
+        // WinnerInfo[] memory mywinner = new WinnerInfo[](numWinners);
+        // for (uint256 i = 0; i < numWinners; i++) {
+        //     mywinner[i] = WinnerInfo({
+        //         winner: addr1,
+        //         matchCount: i,
+        //         numbers: numbers
+        //     });
+        // }
+        //return mywinner;
+
+        uint256 currentWeek = getCurrentWeek();
+        uint256 wCount = 0;
+        uint256 lengthT = 0;
+        
+        if (currentWeek < 3){
+            lengthT = currentWeek;
+        } else {
+            lengthT = 3;
+        }
+
+        for (uint256 i = 0; i < lengthT; i++){
+                for (uint256 j = 0; j < winnersByWeek[i].length; j++){
+                    wCount++;
+            }
+        }
+
+        WinnerInfo[] memory mywinner = new WinnerInfo[](wCount);
+        wCount = 0;
+        for (uint256 i = 0; i < lengthT; i++){
+                for (uint256 j = 0; j < winnersByWeek[i].length; j++){
+                  mywinner[wCount] = winnersByWeek[i][j];
+                  wCount++;
+            }
+        }
+
+        return mywinner;
+        
+    }
+
+    function getMyTicketsForCertainWeek() external view returns (MyTicketInfo[] memory) {
+        uint256 currentWeek = getCurrentWeek();
+        uint256 ticketCount = 0;
+        uint256 numb = 0;
+        uint256 lengthT;
+        
+        // uint8[6] memory numbers = [2,3,4,5,6,7];
+        // uint8 prizee = 5;
+        // for (uint256 i = 0; i < numb; i++) {
+        //      mytickett[i] = MyTicketInfo({
+        //         numbers: numbers,
+        //         prize: prizee
+        //     });
+        // }
+
+        if (currentWeek < 3){
+            lengthT = currentWeek;
+        } else {
+            lengthT = 3;
+        }
+
+        for (uint256 i = 0; i < lengthT; i++){
+                for (uint256 j = 0; j < myTicket[i].length; j++){
+                    ticketCount++;
+            }
+        }
+
+        MyTicketInfo[] memory mytickett = new MyTicketInfo[](ticketCount);
+        
+        for (uint256 i = 0; i < lengthT; i++){
+                for (uint256 j = 0; j < myTicket[i].length; j++){
+                  mytickett[numb] = myTicket[i][j];
+                  numb++;
+            }
+        }
+
+        return mytickett;
+        
+    }
     
 
     function getWinningNumsForCurrentWeek() external view returns (uint8[6] memory) {
@@ -262,6 +359,9 @@ contract Lotto649 {
             quickSort(ticket, left, j - 1);    // j > left, so j > 0
         quickSort(ticket, j + 1, right);
     }
+
+
+    
     
     
 
