@@ -72,17 +72,21 @@ export function Lotto(): ReactElement {
       if (prizePool) setPrizePool(prizePool);
     }
 
-    const getWinners = async () => {
-      const winners = await fetchAnnounceWinnersandPrize();
-      if (winners) setWinners(winners);
-    }
+
 
     getNumbers();
     getWeek();
     getPrizePool();
-    getWinners();
-  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, winners]);
+    
+  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool]);
 
+  useEffect(() => {
+    const getWinners = async () => {
+      const winners = await fetchAnnounceWinnersandPrize();
+      if (winners) setWinners(winners);
+    }
+    getWinners();
+  }, [winners]);
 
   useEffect(() => {
     if (active) {

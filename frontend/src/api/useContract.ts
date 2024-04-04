@@ -94,7 +94,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         }
     }
 
-    const fetchAnnounceWinnersandPrize = async () => {
+    const fetchAnnounceWinnersandPrize = async () : Promise<string[] | undefined> => {
         if (!lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
