@@ -23,6 +23,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   // State to store the winning numbers
   const [winningNumbers, setWinningNumbers] = React.useState<number[]>([]);
   const [winnersAdd, setWinnersAdd] = React.useState<string[]>([]);
+  const [showWinners, setShowWinners] = React.useState(false);
 
   // Function to fetch the winning numbers
   const handleWinningNumbers = async () => {
@@ -33,10 +34,10 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   };
 
   const handleShowWinners = async () => {
+    setShowWinners(true);
     const winners = winnersAdd;
     if (winners) setWinnersAdd(winners);
   }
-
 
   return (
 
@@ -90,21 +91,25 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         
 
         <Box display="flex" justifyContent="center" marginTop={5}>
+        <div>
           <Button variant="contained" onClick={handleShowWinners}>
-          Show Winners
+            Show Winners
           </Button>
+          {showWinners && (
+            <div style={{ marginTop: '10px' }}>
+              {winners.length === 0 ? (
+                <div>Unfortunately, No winners ☹️</div>
+              ) : (
+                winners.map((item, index) => (
+                  <div key={index}>{item}</div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
         </Box>
       </Grid>
       <Grid item xs={12} container justifyContent="flex-end">
-        <div>
-            {winners.length === 0 ? (
-              <div>Unfortunately, No winners ☹️</div>
-            ) : (
-              winners.map((item, index) => (
-                <div key={index}>{item}</div>
-              ))
-            )}
-          </div>
         <Button onClick={handleClose}>Close</Button>
 
       </Grid>
