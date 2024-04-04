@@ -89,9 +89,13 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         </Box>
         
         <div>
-          {winners.map((item, index) => (
-            <div key={index}>{item}</div>
-          ))}
+          {winners.length === 0 ? (
+            <div>Unfortunately, No winners ☹️</div>
+          ) : (
+            winners.map((item, index) => (
+              <div key={index}>{item}</div>
+            ))
+          )}
         </div>
 
         <Box display="flex" justifyContent="center" marginTop={5}>
