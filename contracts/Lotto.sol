@@ -139,7 +139,7 @@ contract Lotto649 {
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
     }
 
-    function generateWinningNumbers() public {
+    function generateWinningNumbers() onlyOwner public {
         for (uint8 i = 0; i < 6; i++) {
             winningNumbers[getCurrentWeek()][i] = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed, i))) % 49) + 1;
             // Ensure unique winning numbers 
