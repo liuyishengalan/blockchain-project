@@ -34,7 +34,11 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     // Fetch the winning numbers
     handleGenerateRequest();
     const numbers = generatedWinningNumbers;
-    if (numbers) setWinningNumbers(numbers);
+    if (numbers) {
+      setWinningNumbers(numbers);
+      requestNewLottoRound();
+      window.alert('Winning numbers generated successfully and new round initialized!');
+    }
   };
 
   const handleShowWinners = async () => {
@@ -43,9 +47,9 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     if (winners) setWinnersAdd(winners);
   }
 
-  const handleNewLottoRound = async () => {
-    requestNewLottoRound();
-  }
+  // const handleNewLottoRound = async () => {
+  //   requestNewLottoRound();
+  // }
 
   return (
 
@@ -93,7 +97,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
 
         <Box display="flex" justifyContent="center" marginTop={5}>
           <Button variant="contained" onClick={handleWinningNumbers} style={{ width: '300px' }}>
-          Generate Winning Numbers
+          Generate Winning Numbers & Initialize New Round
           </Button>
         </Box>
         
@@ -119,9 +123,9 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         </div>
         </Box>
 
-      <Box display="flex" justifyContent="center" marginTop={5}>
+      {/* <Box display="flex" justifyContent="center" marginTop={5}>
         <Button variant="contained" onClick={handleNewLottoRound} style={{ width: '300px' }}> Initialize New Lotto Round</Button>
-      </Box>
+      </Box> */}
 
       </Grid>
       <Grid item xs={12} container justifyContent="flex-end">
