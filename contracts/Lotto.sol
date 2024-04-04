@@ -89,7 +89,7 @@ contract Lotto649 {
 
         // uint8[6] memory winningNums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
         
-        uint256 potForDistribution = pot;
+        uint256 potForDistribution = pot/2;
 
         uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
         uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
