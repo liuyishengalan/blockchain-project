@@ -88,15 +88,6 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           </Button>
         </Box>
         
-        <div>
-          {winners.length === 0 ? (
-            <div>Unfortunately, No winners ☹️</div>
-          ) : (
-            winners.map((item, index) => (
-              <div key={index}>{item}</div>
-            ))
-          )}
-        </div>
 
         <Box display="flex" justifyContent="center" marginTop={5}>
           <Button variant="contained" onClick={handleShowWinners}>
@@ -105,7 +96,17 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         </Box>
       </Grid>
       <Grid item xs={12} container justifyContent="flex-end">
+        <div>
+            {winners.length === 0 ? (
+              <div>Unfortunately, No winners ☹️</div>
+            ) : (
+              winners.map((item, index) => (
+                <div key={index}>{item}</div>
+              ))
+            )}
+          </div>
         <Button onClick={handleClose}>Close</Button>
+
       </Grid>
     </Grid>
     
