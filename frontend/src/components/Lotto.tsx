@@ -78,7 +78,7 @@ export function Lotto(): ReactElement {
     getWeek();
     getPrizePool();
     
-  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool]);
+  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool, requestNewLottoRound]);
 
   useEffect(() => {
     const getWinners = async () => {
