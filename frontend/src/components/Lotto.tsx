@@ -19,7 +19,7 @@ import { useLottoContract } from '../api/useContract'; // Adjust the import path
 import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
-import io from 'socket.io-client';
+//import io from 'socket.io-client';
 import TicketDropdown from './TicketDropdown';
 
 interface WinnerInfo {
@@ -34,7 +34,7 @@ interface MyTicketInfo {
   prize: number;
 }
 
-const contractAddress = '0x75f33c8c28685E28198D8ACeA289dBC93C066ddc';
+const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
   const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
@@ -63,7 +63,7 @@ export function Lotto(): ReactElement {
     fetchAnnounceWinnersandPrize,
     requestNewLottoRound, fetchWinners,fetchTicket} = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
-  const daysLeft = 3 - new Date().getDay();
+  const daysLeft = 3 - new Date().getDay() + 7;
 
   useEffect(() => {
     if (!library) {
