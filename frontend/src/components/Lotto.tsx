@@ -53,7 +53,8 @@ export function Lotto(): ReactElement {
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [userRecentTicket, setUserTicket] = useState<MyTicketInfo[]>([]);
   const [recentWinner, setWinnerrs] = useState<WinnerInfo[]>([]);
-   const [winners, setWinners] = useState<string[]>([]);
+  const [winners, setWinners] = useState<string[]>([]);
+  const [isOwner, setIsOwner] = React.useState<boolean>(false);
   
 
   const { 
@@ -62,10 +63,15 @@ export function Lotto(): ReactElement {
     fetchPrizePool, 
     requestBuyTicket, 
     requestGenerateWinningNumbers,
-    fetchAnnounceWinnersandPrize,
-    requestNewLottoRound, fetchWinners,fetchTicket} = useLottoContract(contractAddress, library);
+    // fetchAnnounceWinnersandPrize,
+    requestNewLottoRound, 
+    fetchWinners,
+    fetchTicket,
+    FetchOwner
+  } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay() + 7;
+  
 
   useEffect(() => {
     if (!library) {
@@ -129,6 +135,10 @@ export function Lotto(): ReactElement {
     try {
       await activate(injected);
       console.log('Successfully connected to MetaMask!');
+      const isOwnerAddr = await FetchOwner();
+      if (isOwnerAddr) {
+        setIsOwner(true);
+      }
     } catch (error) {
       console.error('Error on connecting to MetaMask:', error);
     }
@@ -264,9 +274,11 @@ export function Lotto(): ReactElement {
           </Box>
           {/* The Admin Login button can be an IconButton or a simple Button as per your design */}
           <Box mt={2} display="flex" justifyContent="flex-end">
-            <Button variant="text" onClick={handleAdminLogin} sx={{ ml: 2 }}>
-              Admin Login 
-            </Button>
+            {isOwner && (
+              <Button variant="text" onClick={handleAdminLogin} sx={{ ml: 2 }}>
+                Admin
+              </Button>
+            )}
             <Modal
               open={openAdminLoginModal}
               onClose={handleCloseAdminLoginModal}

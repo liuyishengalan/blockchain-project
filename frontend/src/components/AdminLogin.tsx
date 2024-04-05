@@ -27,6 +27,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   const [winningNumbers, setWinningNumbers] = React.useState<number[]>([]);
   const [winnersAdd, setWinnersAdd] = React.useState<string[]>([]);
   const [showWinners, setShowWinners] = React.useState(false);
+  const [numberGenerated, setNumberGenerated] = React.useState(false);
   // const [initResult, setinitResult] = React.useState<string>();
 
 
@@ -37,6 +38,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     const numbers = generatedWinningNumbers;
     if (numbers) {
       setWinningNumbers(numbers);
+      setNumberGenerated(true);
       requestNewLottoRound();
       window.alert('Winning numbers generated successfully and new round initialized!');
     }
@@ -48,9 +50,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     if (winners) setWinnersAdd(winners);
   }
 
-  // const handleNewLottoRound = async () => {
-  //   requestNewLottoRound();
-  // }
+
 
   return (
 
@@ -67,10 +67,12 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
         <Typography variant='overline'> Current Pool Info </Typography>
 
         <Typography variant="subtitle1" gutterBottom>
-          Total Prize Pool: {prizePool} Ethers
+          Total Prize Pool: 
+          {prizePool} Ethers
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          Time Remaining: {timeRemaining} Days
+          Time Remaining: 
+          {timeRemaining} Days
         </Typography>
 
         </Box>
@@ -96,40 +98,47 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           ))}
         </div>
 
-        <Box display="flex" justifyContent="center" marginTop={5}>
+        <Box display="flex" justifyContent="center" marginTop={5} marginRight={10}>
           <Button variant="contained" onClick={handleWinningNumbers} style={{ width: '300px' }}>
           Generate Winning Numbers & Initialize New Round
           </Button>
         </Box>
         
 
-        <Box display="flex" justifyContent="center" marginTop={5}>
+        <Box display="flex" justifyContent="center" marginTop={5} marginRight={10}>
         <div>
           <Button variant="contained" onClick={handleShowWinners} style={{ width: '300px' }}>
             Show Winners
           </Button>
 
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 200 }} size="small" aria-label="a dense table">
+            <Table sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
                   <TableCell align="center">Winning Addresses</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {showWinners && winners.length === 0 ?(
+              {numberGenerated ? (
+                winners.length === 0 && showWinners ? (
                   <TableRow>
                     <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell>
                   </TableRow>
-                ):
-                (winners.map((item, index) => ( 
-                <TableRow key={index} >
-                  <TableCell component="th" scope="row">
-                  <div key={index}>{item}</div>
-                  </TableCell>
+                ) : (
+                  winners.map((item, index) => ( 
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row" key={index}>
+                        {item}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} align="center" style={{ color: 'red' }} >Winning number is not generatede yet</TableCell>
                 </TableRow>
-                  )))}
-              </TableBody>
+              )}
+            </TableBody>
             </Table>
           </TableContainer>
 

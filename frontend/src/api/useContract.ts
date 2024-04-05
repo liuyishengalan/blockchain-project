@@ -2,6 +2,8 @@ import { Contract, ethers } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
 import { textChangeRangeIsUnchanged } from 'typescript';
+import { useState } from 'react';
+
 interface WinnerInfo {
     winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
     matchCount: number;
@@ -14,6 +16,25 @@ interface MyTicketInfo {
 }
 export function useLottoContract(lottoContractAddress: string, provider: Web3Provider) {
     let lottoContract: Contract | undefined;
+    
+    
+    const FetchOwner = async () => {
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return false;
+        }
+
+        try {
+            const owner = await lottoContract.owner();
+            const user = await provider.getSigner().getAddress();
+            if(owner === user){
+                return true;
+            }
+        } catch (error) {
+            console.error("Failed to fetch owner:", error);
+            return false;
+        }
+    }
 
     const initializeContract = () => {
         if (!provider) {
@@ -141,21 +162,21 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         }
     }
 
-    const fetchAnnounceWinnersandPrize = async () : Promise<string[] | undefined> => {
-        if (!lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return;
-        }
+    // const fetchAnnounceWinnersandPrize = async () : Promise<string[] | undefined> => {
+    //     if (!lottoContract) {
+    //         console.error("Lotto contract is not initialized");
+    //         return;
+    //     }
     
-        try {
-            await lottoContract.announceWinners();
-            const tx= await lottoContract.getMywinnerForCurrentWeek();
-            console.log("announce winners successfully");
-            return tx;
-        } catch (error) {
-            console.error("Failed to announce winners:", error);
-        }
-    }
+    //     try {
+    //         await lottoContract.announceWinners();
+    //         const tx= await lottoContract.getMywinnerForCurrentWeek();
+    //         console.log("announce winners successfully");
+    //         return tx;
+    //     } catch (error) {
+    //         console.error("Failed to announce winners:", error);
+    //     }
+    // }
 
     const requestNewLottoRound = async (): Promise<boolean|undefined> => {
         if (!lottoContract) {
@@ -183,10 +204,10 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         fetchPrizePool,
         requestBuyTicket,
         requestGenerateWinningNumbers,
-        fetchAnnounceWinnersandPrize,
+        // fetchAnnounceWinnersandPrize,
         requestNewLottoRound,
         fetchWinners,
         fetchTicket,
-        
+        FetchOwner
     };
 }
