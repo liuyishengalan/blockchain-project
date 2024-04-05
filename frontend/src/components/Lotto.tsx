@@ -19,8 +19,9 @@ import { useLottoContract } from '../api/useContract'; // Adjust the import path
 import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
+import { CONTRACT_ADDRESSES } from '@thirdweb-dev/react';
 //import io from 'socket.io-client';
-import TicketDropdown from './TicketDropdown';
+// import TicketDropdown from './TicketDropdown';
 
 interface WinnerInfo {
   winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
@@ -34,7 +35,8 @@ interface MyTicketInfo {
   prize: number;
 }
 
-const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
+// const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
+const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
   const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);

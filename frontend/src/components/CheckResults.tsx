@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Address } from '@thirdweb-dev/react';
 import Paper from '@mui/material/Paper';
-import TicketDropdown from './TicketDropdown';
+// import TicketDropdown from './TicketDropdown';
 
 interface WinnerInfo {
   winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
