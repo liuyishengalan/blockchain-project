@@ -5,19 +5,20 @@ pragma solidity ^0.8.0;
 
 contract Lotto649 {
     address public owner;
-    uint256 public ticketPrice = 0.001 ether;
+    uint256 public ticketPrice = 1 ether;
     uint256 public startTimestamp;  // blockchain timestamp
     uint256 public lotteStartTimestamp; // start time of the current ACTIVE lotto
     uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
     uint256 public pot = 0; // Accumulated pot for the current week
-
+    uint256 prize = 0;
 
     // Prize Distribution Constants
     uint256 constant TOTAL_LEVEL_4_PRIZE = 54.35 ether; 
     uint256 constant TOTAL_LEVEL_1_PRIZE = 1000 ether; 
     uint256 constant PERCENTAGE_2 = 3225;
     uint256 constant PERCENTAGE_3 = 135;
+    
 
     struct Ticket {
         uint8[6] numbers;
@@ -41,7 +42,10 @@ contract Lotto649 {
     mapping(address => uint256) public winnings;
     mapping(uint256 => WinnerInfo[]) public winnersByWeek;
     mapping(uint256 => uint8[6]) private winningNumbers;
-    mapping(uint256 => MyTicketInfo[]) public myTicket;
+    mapping(address => mapping(uint256 => MyTicketInfo[])) public myTicket;
+    mapping(address => mapping(uint256 => MyTicketInfo[])) public myTicketAfter;
+    mapping(uint256 => bool) public annouce;
+    //mapping(address => MyTicketInfo[]) public myTicket1;
 
     event TicketPurchased(address indexed buyer, uint256 week, uint8[6] numbers);
     event WinnersAnnounced(uint256 week, uint8[6] winningNumbers, uint256[4] prizeAmounts);
@@ -79,7 +83,7 @@ contract Lotto649 {
     function purchaseTicket(uint8[6] calldata numbers) external payable{
         require(msg.value == ticketPrice, "Ticket price is 1 ETH");
         require(block.timestamp >= lotteStartTimestamp && block.timestamp < lotteStartTimestamp + WEEK_DURATION, "Purchases are not within the allowed week");
-
+        
         for (uint8 i = 0; i < 6; i++) {
             require(numbers[i] > 0 && numbers[i] <= 49, "Numbers must be between 1 and 49");
             for (uint8 j = i + 1; j < 6; j++) {
@@ -88,7 +92,9 @@ contract Lotto649 {
         }
         uint256 currentWeek = getCurrentWeek();
         ticketsByWeek[currentWeek].push(Ticket(numbers, msg.sender));
+        myTicket[msg.sender][currentWeek].push(MyTicketInfo(numbers,uint8(0)));
         pot += msg.value;
+        annouce[currentWeek] = false;
         emit TicketPurchased(msg.sender, currentWeek, numbers);
     }
 
@@ -103,9 +109,10 @@ contract Lotto649 {
 
         uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
         uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
+        uint256 count = 0;
 
         for (uint i = 0; i < ticketsByWeek[currentWeek].length; i++) {
-            uint matchCount = 0;
+            uint256 matchCount = 0;
             for (uint j = 0; j < 6; j++) {
                 for (uint k = 0; k < 6; k++) {
                     if (ticketsByWeek[currentWeek][i].numbers[j] == winningNumbers[getCurrentWeek()][k]) {
@@ -123,9 +130,18 @@ contract Lotto649 {
             //         break;
             //     }
             // }
-            if(ticketsByWeek[currentWeek][i].entrant == msg.sender){
-                myTicket[currentWeek].push(MyTicketInfo(ticketsByWeek[currentWeek][i].numbers,uint8(matchCount)));
-            }
+           
+            if (matchCount == 6){
+                prize = 1;
+            } else if (matchCount == 5){
+                prize = 2;
+            } else if (matchCount == 4){
+                prize = 3;
+            } else if (matchCount == 3){
+                prize = 4;
+            } else {prize = 5;}
+            myTicketAfter[ticketsByWeek[currentWeek][i].entrant][currentWeek].push(MyTicketInfo(ticketsByWeek[currentWeek][i].numbers,uint8(prize)));
+            
 
 
             if (matchCount >= 3) {
@@ -134,9 +150,10 @@ contract Lotto649 {
                 winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount,ticketsByWeek[currentWeek][i].numbers));
             }
 
-        pot = 0; // Reset pot for the next round
+        
         }
-
+        pot = 0; // Reset pot for the next round
+        annouce[currentWeek] = true;
         // Calculate prize amounts based on winner counts
         if (winnerCounts[3] > 0) winningPrizes[3] = TOTAL_LEVEL_1_PRIZE / winnerCounts[3];
         if (winnerCounts[2] > 0) winningPrizes[2] = (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2];
@@ -262,16 +279,17 @@ contract Lotto649 {
         }
 
         for (uint256 i = 0; i < lengthT; i++){
-                for (uint256 j = 0; j < winnersByWeek[i].length; j++){
+                for (uint256 j = 0; j < winnersByWeek[i+1].length; j++){
                     wCount++;
             }
         }
 
         WinnerInfo[] memory mywinner = new WinnerInfo[](wCount);
         wCount = 0;
+        
         for (uint256 i = 0; i < lengthT; i++){
-                for (uint256 j = 0; j < winnersByWeek[i].length; j++){
-                  mywinner[wCount] = winnersByWeek[i][j];
+                for (uint256 j = 0; j < winnersByWeek[i+1].length; j++){
+                  mywinner[wCount] = (winnersByWeek[i+1][j]);
                   wCount++;
             }
         }
@@ -302,23 +320,32 @@ contract Lotto649 {
         }
 
         for (uint256 i = 0; i < lengthT; i++){
-                for (uint256 j = 0; j < myTicket[i].length; j++){
+            for (uint256 j = 0; j < myTicket[msg.sender][i+1].length; j++){
                     ticketCount++;
             }
         }
 
         MyTicketInfo[] memory mytickett = new MyTicketInfo[](ticketCount);
-        
+        ticketCount = 0;
         for (uint256 i = 0; i < lengthT; i++){
-                for (uint256 j = 0; j < myTicket[i].length; j++){
-                  mytickett[numb] = myTicket[i][j];
-                  numb++;
+            if (annouce[i+1]){
+                for (uint256 j = 0; j < myTicketAfter[msg.sender][i+1].length; j++){
+                    mytickett[ticketCount] = myTicketAfter[msg.sender][i+1][j];
+                    ticketCount++;
+                }
+            } else {
+                for (uint256 j = 0; j < myTicket[msg.sender][i+1].length; j++){
+                    mytickett[ticketCount] = myTicket[msg.sender][i+1][j];
+                    ticketCount++;
+                }
             }
+            
         }
 
         return mytickett;
         
     }
+    
     
 
     function getWinningNumsForCurrentWeek() external view returns (uint8[6] memory) {
