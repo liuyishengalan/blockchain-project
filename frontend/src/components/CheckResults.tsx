@@ -47,7 +47,7 @@ const CheckResults: React.FC<CheckResultProps> = ({
     <Box  mt={2} display="flex" flexDirection="row">
       <Box mt={2} marginRight={2}>
         <Typography variant="h5" id="check-results-modal-title" gutterBottom>
-        Recent Winners
+        Recent Winners 'Within 3 weeks'
         </Typography>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -86,7 +86,7 @@ const CheckResults: React.FC<CheckResultProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>Number</TableCell>
-                <TableCell align="right">#Match Number</TableCell>
+                <TableCell align="right">Prize</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
