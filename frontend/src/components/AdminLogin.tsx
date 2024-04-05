@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button,TextField, Box, Typography, Grid } from '@mui/material';
+import { Button,TextField, Box, Typography, Grid, TableContainer, TableHead,TableRow,TableCell,TableBody,Table  } from '@mui/material';
+import Paper from '@mui/material/Paper';
 
 interface AdminLoginProps {
   handleClose: () => void;
@@ -107,6 +108,34 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           <Button variant="contained" onClick={handleShowWinners} style={{ width: '300px' }}>
             Show Winners
           </Button>
+
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 200 }} size="small" aria-label="a dense table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Winning Addresses</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {showWinners && winners.length === 0 ?(
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell>
+                  </TableRow>
+                ):
+                (winners.map((item, index) => ( 
+                <TableRow key={index} >
+                  <TableCell component="th" scope="row">
+                  <div key={index}>{item}</div>
+                  </TableCell>
+                </TableRow>
+                  )))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+
+
+{/* 
           {showWinners && (
             <div style={{ marginTop: '10px' }}>
               {winners.length === 0 ? (
@@ -119,7 +148,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
                 ))
               )}
             </div>
-          )}
+          )} */}
         </div>
         </Box>
 
