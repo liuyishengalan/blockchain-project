@@ -16,8 +16,6 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
   currentWeek,
   prizePool,
   timeRemaining,
-
-  // TODO CHRIS 
 }) => {
   const [numbers, setNumbers] = useState(Array(6).fill(''));
 
@@ -70,7 +68,7 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
           </Box>
           <Box display="flex" justifyContent="center">
           <Button variant="contained" onClick={onPurchase}>
-            Purchase Ticket (1 ETH)
+            Purchase Ticket (0.001 ETH)
           </Button>
           </Box>
         </Box>
