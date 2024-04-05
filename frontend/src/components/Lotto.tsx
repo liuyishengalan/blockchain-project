@@ -193,7 +193,7 @@ export function Lotto(): ReactElement {
     return (
       <Container maxWidth="md" className={shouldAnimate ? 'fade-in' : ''}>
         <Box sx={{ my: 4, textAlign: 'center' }}>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h2" component="h1" gutterBottom marginTop = {20} marginBottom = {15}>
             Lotto 6/49 on Blockchain
           </Typography>
   
@@ -222,11 +222,11 @@ export function Lotto(): ReactElement {
             </Modal>
           </Box>
           <Box mt={4}>
-            <Typography variant="h6">Winning Numbers:</Typography>
-            <Typography variant="subtitle1" gutterBottom>
+            <Typography variant="h5" gutterBottom marginTop = {2}>
               Last Week: Round {latestWinningWeek}
             </Typography>
-            <Grid container spacing={2} justifyContent="center">
+            <Typography variant="h4" marginTop = {2}>Winning Numbers:</Typography>
+            <Grid container spacing={2} justifyContent="center" marginTop = {2}>
             {winningNumbers.map((number, index) => (
               <Grid key={index} item>
                 <Paper elevation={4} sx={{ p: 1, width: '2rem', textAlign: 'center' }}>
