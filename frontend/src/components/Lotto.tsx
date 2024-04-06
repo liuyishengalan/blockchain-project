@@ -170,18 +170,23 @@ export function Lotto(): ReactElement {
   const handlePurchase = async (ticketNumbers: number[]) => {
     console.log('Purchasing ticket with numbers: ', ticketNumbers);
     setIsTransactionProcessing(true); // Start showing the loading modal
-  
+    let isError = false;
     try {
       const result = await requestBuyTicket(ticketNumbers);
       console.log("Ticket purchased successfully", result);
       // Handle success (e.g., show a success message)
     } catch (error) {
       console.error("Failed to purchase ticket:", error);
-      alert("Failed to purchase ticket: " + error);
-      // Handle error (e.g., show an error message)
+      // alert("Failed to purchase ticket: " + error);
+      isError = true;
     } finally {
       setIsTransactionProcessing(false); // Stop showing the loading modal
-      alert("Successfully purchased!");
+      if (isError === false) {
+        alert("Successfully purchased!");
+      } else {
+        alert("Transaction cancelled! \nYou cancelled it or you need to check your wallet balance");
+      }
+      
     }
   };
   

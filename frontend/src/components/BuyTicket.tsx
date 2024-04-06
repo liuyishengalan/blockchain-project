@@ -26,11 +26,25 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
   };
 
   const onPurchase = () => {
-    const numericNumbers = numbers.map(Number); // Convert to numbers
-    // TODO: Validate the numbers before purchasing
+    const numericNumbers = numbers.map(Number).filter(number => !isNaN(number) && number >= 1 && number <= 49); // Convert to numbers and filter out invalid entries
+  
+    // Check for the correct amount of numbers
+    if (numericNumbers.length !== 6) {
+      window.alert("Please select exactly 6 numbers.");
+      return; // Stop the function if the condition is not met
+    }
+  
+    // Check for uniqueness
+    const uniqueNumbers = new Set(numericNumbers); // Correctly create a Set from the numericNumbers
+    if (uniqueNumbers.size !== numericNumbers.length) { 
+      window.alert("All numbers must be unique.");
+      return;
+    }
+  
+    // If all validations pass, proceed with the purchase
     handlePurchase(numericNumbers);
-    window.alert('Please wait to confirm your Lotto purchased in your wallet');
   };
+  
 
   return (
     <Box marginLeft={10} marginRight={10} marginTop={5}>
