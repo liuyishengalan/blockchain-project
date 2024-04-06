@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography } from '@mui/material';
+import { Button, TextField, Box, Typography, Modal, CircularProgress } from '@mui/material';
 
 interface BuyTicketProps {
   handleClose: () => void;

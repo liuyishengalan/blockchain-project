@@ -5,7 +5,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { Button, Typography, Box, Container, Paper, Grid, Modal } from '@mui/material';
+import { Button, Typography, Box, Container, Paper, Grid, Modal, CircularProgress } from '@mui/material';
 import { injected } from '../utils/connectors';
 import BuyTicket from './BuyTicket';
 import AdminLogin from './AdminLogin';
@@ -47,6 +47,9 @@ export function Lotto(): ReactElement {
   const [userRecentTicket, setUserTicket] = useState<MyTicketInfo[]>([]);
   const [recentWinner, setWinnerrs] = useState<WinnerInfo[]>([]);
   const [winners, setWinners] = useState<string[]>([]);
+
+  // waiting loading pop up
+  const [isTransactionProcessing, setIsTransactionProcessing] = useState(false);
 
   const {
     fetchWinningNumbers, 
@@ -164,10 +167,25 @@ export function Lotto(): ReactElement {
     setOpenAdminLoginModal(false);
   }
 
-  const handlePurchase = (ticketNumbers: number[]) => {
+  const handlePurchase = async (ticketNumbers: number[]) => {
     console.log('Purchasing ticket with numbers: ', ticketNumbers);
-    requestBuyTicket(ticketNumbers);
+    setIsTransactionProcessing(true); // Start showing the loading modal
+  
+    try {
+      const result = await requestBuyTicket(ticketNumbers);
+      console.log("Ticket purchased successfully", result);
+      // Handle success (e.g., show a success message)
+    } catch (error) {
+      console.error("Failed to purchase ticket:", error);
+      alert("Failed to purchase ticket: " + error);
+      // Handle error (e.g., show an error message)
+    } finally {
+      setIsTransactionProcessing(false); // Stop showing the loading modal
+      alert("Successfully purchased!");
+    }
   };
+  
+  
 
   const handleGenerateWinningNumbers = () => {
     console.log('request for generating winning numbers sent!');
@@ -240,6 +258,21 @@ export function Lotto(): ReactElement {
               />
               </div>
             </Modal>
+            <Modal
+              open={isTransactionProcessing}
+              aria-labelledby="loading-modal-title"
+              aria-describedby="loading-modal-description"
+            >
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                height="100%"
+              >
+                <CircularProgress />
+              </Box>
+            </Modal>
+
           </Box>
           <Box mt={4}>
             <Typography variant="h5" gutterBottom marginTop = {2}>

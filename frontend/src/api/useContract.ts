@@ -149,20 +149,27 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
 
     const requestBuyTicket = async (ticketNumbers: number[]) => {
         if (!isContractReady || !lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return;
+            throw new Error("Lotto contract is not initialized");
         }
     
         try {
-            // Ensure to include the value field to send 1 ETH along with the transaction
-            await lottoContract.purchaseTicket(ticketNumbers, {
-                value: ethers.utils.parseEther("0.001"), // Converts 1 ETH to Wei
+            const transactionResponse = await lottoContract.purchaseTicket(ticketNumbers, {
+                value: ethers.utils.parseEther("0.001"),
             });
-            console.log("Ticket purchased successfully");
+            const receipt = await transactionResponse.wait();
+    
+            if (receipt.status === 1) {
+                console.log("Ticket purchased successfully");
+                return { success: true, receipt: receipt };
+            } else {
+                return { success: false, error: "Transaction failed without a success receipt." };
+            }
         } catch (error) {
             console.error("Failed to purchase ticket:", error);
+            throw error; // Re-throwing the error to be caught by the caller
         }
     };
+    
 
     const requestGenerateWinningNumbers = async () => {
         if (!isContractReady || !lottoContract) {
