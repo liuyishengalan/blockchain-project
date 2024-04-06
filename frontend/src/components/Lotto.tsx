@@ -1,14 +1,10 @@
 import React, {
-  ChangeEvent,
-  MouseEvent,
   ReactElement,
   useEffect,
   useState,
   useCallback,
 } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { Contract, ethers, Signer } from 'ethers';
-import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Button, Typography, Box, Container, Paper, Grid, Modal } from '@mui/material';
 import { injected } from '../utils/connectors';
 import BuyTicket from './BuyTicket';
@@ -19,9 +15,6 @@ import { useLottoContract } from '../api/useContract'; // Adjust the import path
 import eth_logo from '../assets/eth.gif';
 import load_gif from '../assets/load.gif'
 import { modalStyle } from '../styles/styles';
-import { get } from 'http';
-import { CONTRACT_ADDRESSES } from '@thirdweb-dev/react';
-import {getProvider} from '../utils/provider'
 //import io from 'socket.io-client';
 // import TicketDropdown from './TicketDropdown';
 
@@ -38,13 +31,10 @@ interface MyTicketInfo {
 }
 
 // const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
-const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
-// const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
+// const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
+const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
 export function Lotto(): ReactElement {
-  const { library, active, account, activate } = useWeb3React();
-  const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
-  const [signer, setSigner] = React.useState<ethers.Signer>();
-  const [lottoContract, setLottoContract] = React.useState<Contract>();
+  const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
   const [openAdminLoginModal, setOpenAdminLoginModal] = useState(false);
   const [openCheckResultsModal, setOpenCheckResultsModal] = useState(false);
@@ -64,17 +54,11 @@ export function Lotto(): ReactElement {
     fetchPrizePool, 
     requestBuyTicket, 
     requestGenerateWinningNumbers,
-    // fetchAnnounceWinnersandPrize,
     requestNewLottoRound, 
     fetchWinners,
     fetchTicket,
-    // isOwner,
-    // FetchOwner,
-    user,
-    owner,
     isContractReady,
     isOwner,
-    // contractInitialized
   } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay() + 7;

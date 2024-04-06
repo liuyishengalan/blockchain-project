@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Contract, ethers } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
-import { textChangeRangeIsUnchanged } from 'typescript';
 
 interface WinnerInfo {
     winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
@@ -156,7 +155,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
     
         try {
             // Ensure to include the value field to send 1 ETH along with the transaction
-            const tx = await lottoContract.purchaseTicket(ticketNumbers, {
+            await lottoContract.purchaseTicket(ticketNumbers, {
                 value: ethers.utils.parseEther("0.001"), // Converts 1 ETH to Wei
             });
             console.log("Ticket purchased successfully");
