@@ -196,14 +196,20 @@ export function Lotto(): ReactElement {
   if (active) {
     if (!isContractReady) {
       return (
-        <Container maxWidth="md">
-        <Box sx={{ my: 4, textAlign: 'center' }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Loading...
-          </Typography>
-          <img src={load_gif} alt="Loading" style={{ width: '300px', height: '300px', marginBottom: '20px'}}/>
-        </Box>
-      </Container>
+        <Container maxWidth="md" sx={{ 
+          height: '100vh', // Sets the height of the Container to full viewport height
+          display: 'flex', // Enables flexbox layout
+          flexDirection: 'column', // Stacks children vertically
+          justifyContent: 'center', // Centers content vertically in the container
+          alignItems: 'center' // Centers content horizontally in the container
+        }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <img src={load_gif} alt="Loading..." style={{ width: '120px', height: '120px'}}/>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Wait a second...
+            </Typography>
+          </Box>
+        </Container>
       )
     }
 
