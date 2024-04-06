@@ -20,6 +20,7 @@ import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
 import { CONTRACT_ADDRESSES } from '@thirdweb-dev/react';
+import {getProvider} from '../utils/provider'
 //import io from 'socket.io-client';
 // import TicketDropdown from './TicketDropdown';
 
@@ -36,7 +37,8 @@ interface MyTicketInfo {
 }
 
 // const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
-const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
+// const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
+const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
   const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
@@ -54,7 +56,7 @@ export function Lotto(): ReactElement {
   const [userRecentTicket, setUserTicket] = useState<MyTicketInfo[]>([]);
   const [recentWinner, setWinnerrs] = useState<WinnerInfo[]>([]);
   const [winners, setWinners] = useState<string[]>([]);
-  const [isOwner, setIsOwner] = React.useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState(false);
   
 
   const { 
@@ -67,8 +69,11 @@ export function Lotto(): ReactElement {
     requestNewLottoRound, 
     fetchWinners,
     fetchTicket,
-    FetchOwner,
-    contractInitialized
+    // isOwner,
+    // FetchOwner,
+    user,
+    owner,
+    // contractInitialized
   } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay() + 7;
@@ -128,21 +133,6 @@ export function Lotto(): ReactElement {
     }
   }, [active]);
 
-  useEffect(() => {
-    const recognizeAdmin = async () => {
-        if (contractInitialized) {
-            const isOwnerAddr = await FetchOwner();
-            if (isOwnerAddr) {
-                setIsOwner(true);
-                return;
-            }
-        }
-    };
-
-    recognizeAdmin(); // Call the async function immediately
-
-  }, [contractInitialized]);
-
   const handleConnectWallet = useCallback(async () => {
     // Since we're inside a callback, we don't use the hook here, 
     // just the activate function passed from useWeb3React
@@ -150,9 +140,9 @@ export function Lotto(): ReactElement {
       await activate(injected);
       console.log('Successfully connected to MetaMask!');
       // const isOwnerAddr = await FetchOwner();
-      // if (isOwnerAddr) {
-      //   setIsOwner(true);
-      // }
+      if (owner == user) {
+        setIsOwner(true);
+      }
     } catch (error) {
       console.error('Error on connecting to MetaMask:', error);
     }

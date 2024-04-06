@@ -16,23 +16,40 @@ interface MyTicketInfo {
 }
 export function useLottoContract(lottoContractAddress: string, provider: Web3Provider) {
     let lottoContract: Contract | undefined;
-    let contractInitialized = false;
+    let owner: string | undefined;
+    let user: string | undefined;
     
     
-    const FetchOwner = async () => {
+    const initializeContract = async() => {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        console.log('Ethereum provider initialized successfully:', provider);
+
+        if (!provider) {
+            console.error("Provider is not available");
+            return;
+        }
+
+        lottoContract = new Contract(lottoContractAddress, LottoArtifact.abi, provider.getSigner());
+        owner = lottoContract.owner();
+        user = await provider.getSigner().getAddress();
+
+    };
+
+    // Initialize contract upon hook call
+    initializeContract();
+
+
+    const isOwner = async () => {
+        await initializeContract();
+        if (!lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+
         try {
-            await initializeContract(); // Wait for initialization to complete
-    
-            if (!lottoContract) {
-                console.error("Lotto contract is not initialized");
-                return false;
-            }
-    
             const owner = await lottoContract.owner();
-            console.log(owner);
             const user = await provider.getSigner().getAddress();
-            console.log(user);
-            
             if(owner === user){
                 return true;
             }
@@ -42,15 +59,6 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         }
     }
 
-
-    const initializeContract = async() => {
-        if (!provider) {
-            console.error("Provider is not available");
-            return;
-        }
-
-        lottoContract = new Contract(lottoContractAddress, LottoArtifact.abi, provider.getSigner());
-    };
 
     // Function to fetch winning numbers
     const fetchWinningNumbers = async (): Promise<number[] | undefined> => {
@@ -202,9 +210,6 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     }
     
 
-    // // Initialize contract upon hook call
-    initializeContract();
-
     return {
         fetchWinningNumbers,
         fetchCurrentWeek,
@@ -215,7 +220,8 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         requestNewLottoRound,
         fetchWinners,
         fetchTicket,
-        FetchOwner,
-        contractInitialized
+        isOwner,
+        user,
+        owner,
     };
 }
