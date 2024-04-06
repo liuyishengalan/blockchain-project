@@ -59,7 +59,7 @@ contract Lotto649 {
     modifier timeForNewPool() {
 
         // NOTE: testing purposes only, change WEEK_DURATION duration for 5 minutes
-        uint TEST_DURATION = 5 minutes;
+        uint TEST_DURATION = 10 seconds;
         require(block.timestamp >= lotteStartTimestamp + TEST_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends");
         _;
     }
@@ -173,19 +173,29 @@ contract Lotto649 {
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
     }
 
-    function generateWinningNumbers() onlyOwner timeForNewPool public {
-        for (uint8 i = 0; i < 6; i++) {
-            winningNumbers[getCurrentWeek()][i] = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed, i))) % 49) + 1;
-            // Ensure unique winning numbers 
-            for (uint8 j = 0; j < i; j++) {
-                if (winningNumbers[getCurrentWeek()][i] == winningNumbers[getCurrentWeek()][j]) {
-                    i--;
-                    break;
-                }
+    function generateWinningNumbers() public onlyOwner timeForNewPool {
+    // Assuming we want to generate 6 unique random numbers
+    for (uint8 i = 0; i < 6; i++) {
+        // Simplified random number generation logic
+        uint8 randNumber = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, i))) % 49) + 1;
+        
+        // Check for uniqueness; this is a naive approach and might need optimization
+        bool isUnique = true;
+        for (uint8 j = 0; j < i; j++) {
+            if (winningNumbers[getCurrentWeek()][j] == randNumber) {
+                isUnique = false;
+                break;
             }
         }
-        seed = (block.timestamp + block.prevrandao + seed) % 100;
+        if (isUnique) {
+            winningNumbers[getCurrentWeek()][i] = randNumber;
+        } else {
+            i--; // Retry this iteration with a new random number
+        }
     }
+    // Additional logic to handle the case after successfully setting the numbers...
+}
+
 
     function getCurrentWeek() public view returns (uint256) {
         return (block.timestamp - startTimestamp) / WEEK_DURATION + 1; 

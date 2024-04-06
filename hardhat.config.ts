@@ -4,7 +4,15 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.24",
+  solidity: {
+    version: "0.8.24",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
   paths: {
     sources: "./contracts",
     tests: "./test",
@@ -14,7 +22,6 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 31337,
-      blockConformations: 1,
       allowUnlimitedContractSize: true
     },
     sepolia: {
@@ -23,14 +30,14 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.SEPOLIA_PRIVATE_KEY !== undefined
           ? [process.env.SEPOLIA_PRIVATE_KEY]
-          : []
+          : [],
+      gas: 'auto'
     }
   },
-  namedAccounts:{
-    deployer: {
-      default: 0
-    }
-  }
+  gasReporter: {
+    enabled: process.env.REPORT_GAS !== undefined,
+    currency: 'USD'
+  },
 };
 
 export default config;
