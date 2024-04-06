@@ -20,7 +20,6 @@ import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
 import { CONTRACT_ADDRESSES } from '@thirdweb-dev/react';
-import { use } from 'chai';
 //import io from 'socket.io-client';
 // import TicketDropdown from './TicketDropdown';
 
@@ -68,7 +67,8 @@ export function Lotto(): ReactElement {
     requestNewLottoRound, 
     fetchWinners,
     fetchTicket,
-    FetchOwner
+    FetchOwner,
+    contractInitialized
   } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay() + 7;
@@ -128,7 +128,20 @@ export function Lotto(): ReactElement {
     }
   }, [active]);
 
+  useEffect(() => {
+    const recognizeAdmin = async () => {
+        if (contractInitialized) {
+            const isOwnerAddr = await FetchOwner();
+            if (isOwnerAddr) {
+                setIsOwner(true);
+                return;
+            }
+        }
+    };
 
+    recognizeAdmin(); // Call the async function immediately
+
+  }, [contractInitialized]);
 
   const handleConnectWallet = useCallback(async () => {
     // Since we're inside a callback, we don't use the hook here, 
@@ -136,6 +149,10 @@ export function Lotto(): ReactElement {
     try {
       await activate(injected);
       console.log('Successfully connected to MetaMask!');
+      // const isOwnerAddr = await FetchOwner();
+      // if (isOwnerAddr) {
+      //   setIsOwner(true);
+      // }
     } catch (error) {
       console.error('Error on connecting to MetaMask:', error);
     }

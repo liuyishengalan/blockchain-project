@@ -16,20 +16,23 @@ interface MyTicketInfo {
 }
 export function useLottoContract(lottoContractAddress: string, provider: Web3Provider) {
     let lottoContract: Contract | undefined;
+    let contractInitialized = false;
     
     
     const FetchOwner = async () => {
-        await initializeContract();
-        if (!lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return false;
-        }
-
         try {
+            await initializeContract(); // Wait for initialization to complete
+    
+            if (!lottoContract) {
+                console.error("Lotto contract is not initialized");
+                return false;
+            }
+    
             const owner = await lottoContract.owner();
             console.log(owner);
             const user = await provider.getSigner().getAddress();
             console.log(user);
+            
             if(owner === user){
                 return true;
             }
@@ -40,7 +43,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     }
 
 
-    const initializeContract = () => {
+    const initializeContract = async() => {
         if (!provider) {
             console.error("Provider is not available");
             return;
@@ -212,6 +215,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         requestNewLottoRound,
         fetchWinners,
         fetchTicket,
-        FetchOwner
+        FetchOwner,
+        contractInitialized
     };
 }
