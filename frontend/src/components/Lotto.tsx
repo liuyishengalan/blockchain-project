@@ -31,8 +31,8 @@ interface MyTicketInfo {
 }
 
 // const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
-// const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
-const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
+const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
+// const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -50,6 +50,7 @@ export function Lotto(): ReactElement {
 
   // waiting loading pop up
   const [isTransactionProcessing, setIsTransactionProcessing] = useState(false);
+  const [isGeneratingNumbers, setIsGeneratingNumbers] = useState(false);
 
   const {
     fetchWinningNumbers, 
@@ -186,16 +187,50 @@ export function Lotto(): ReactElement {
       } else {
         alert("Transaction cancelled! \nYou cancelled it or you need to check your wallet balance");
       }
-      
     }
   };
   
   
 
-  const handleGenerateWinningNumbers = () => {
+  const handleGenerateWinningNumbers = async () => {
     console.log('request for generating winning numbers sent!');
-    requestGenerateWinningNumbers();
-    fetchWinningNumbers();
+    setIsGeneratingNumbers(true)
+    let isError = false;
+    try {
+      const result = await requestGenerateWinningNumbers();
+      console.log("Generate numbers successfully", result);
+    } catch (error) {
+      console.error("Failed to generate numbers", error);
+      isError = true;
+    } finally {
+      // setIsGeneratingNumbers(false); // Stop showing the loading modal
+      if (isError === false) {
+        alert("Successfully Generated and now starting new round!");
+        handleNewLottoRound();
+      } else {
+        setIsGeneratingNumbers(false);
+        alert("Cancelled! \nYou cancelled it or you need to check your wallet balance");
+      }
+    }
+  }
+  const handleNewLottoRound = async () => {
+    console.log('request for starting new lotto round sent!');
+    setIsGeneratingNumbers(true)
+    let isError_newRound = false;
+    try {
+      const result = await  requestNewLottoRound();
+      console.log("Start new round successfully", result);
+    } catch (error) {
+      console.error("Failed to start new round", error);
+      isError_newRound = true;
+    } finally {
+      setIsGeneratingNumbers(false); // Stop showing the loading modal
+      if (isError_newRound === false) {
+        alert("Successfully started!");
+      } else {
+        alert("Cancelled! \nYou cancelled it or you need to check your wallet balance");
+      }
+    }
   }
 
 
@@ -353,6 +388,21 @@ export function Lotto(): ReactElement {
                   requestNewLottoRound={requestNewLottoRound}
                 />
               </div>
+            </Modal>
+            
+            <Modal
+              open={isGeneratingNumbers}
+              aria-labelledby="loading-modal-title"
+              aria-describedby="loading-modal-description"
+            >
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                height="100%"
+              >
+                <CircularProgress />
+              </Box>
             </Modal>
           </Box>
         </Box>

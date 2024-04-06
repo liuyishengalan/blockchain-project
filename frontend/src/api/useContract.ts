@@ -173,17 +173,27 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
 
     const requestGenerateWinningNumbers = async () => {
         if (!isContractReady || !lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return;
+            throw new Error("Lotto contract is not initialized");
         }
     
         try {
-            await lottoContract.generateWinningNumbers();
-            console.log("Winning numbers generated successfully");
+            const transactionResponse = await lottoContract.generateWinningNumbers({
+                value: ethers.utils.parseEther("0"),
+            });
+            const receipt = await transactionResponse.wait();
+    
+            if (receipt.status === 1) {
+                console.log("Winning numbers generated successfully");
+                return { success: true, receipt: receipt };
+            } else {
+                console.error("Transaction failed without a success receipt.");
+                return { success: false, error: "Transaction failed without a success receipt." };
+            }
         } catch (error) {
             console.error("Failed to generate winning numbers:", error);
+            return { success: false, error: error};
         }
-    }
+    };
 
     // const fetchAnnounceWinnersandPrize = async () : Promise<string[] | undefined> => {
     //     if (!lottoContract) {
@@ -208,7 +218,9 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         }
     
         try {
-            const result = await lottoContract.initializeNewLotto();
+            const result = await lottoContract.initializeNewLotto({
+                value: ethers.utils.parseEther("0"),
+            });
             console.log("New round started successfully");
             return  !!result;
         } catch (error) {

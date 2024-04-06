@@ -34,13 +34,18 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   // Function to fetch the winning numbers
   const handleWinningNumbers = async () => {
     // Fetch the winning numbers
-    handleGenerateRequest();
+
+    //TODO: check if it's ok to generate new round
+    // CHECK TIME and STATUS
+
+    handleGenerateRequest(); // new round is triggred inside this function
     const numbers = generatedWinningNumbers;
+    // INCORRECT
     if (numbers) {
       setWinningNumbers(numbers);
       setNumberGenerated(true);
-      requestNewLottoRound();
-      window.alert('Winning numbers generated successfully and new round initialized!');
+      // requestNewLottoRound();
+      // window.alert('Winning numbers generated successfully and new round initialized!');
     }
   };
 
