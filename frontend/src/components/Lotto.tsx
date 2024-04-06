@@ -129,7 +129,13 @@ export function Lotto(): ReactElement {
       setShouldAnimate(true);
       // Optionally, remove the animation class after the animation ends to avoid re-animating on re-renders
       const timer = setTimeout(() => setShouldAnimate(false), 1000); // Match the animation duration
+
+      if (owner === user) {
+          setIsOwner(true);
+        }
+
       return () => clearTimeout(timer);
+
     }
   }, [active]);
 
@@ -139,10 +145,7 @@ export function Lotto(): ReactElement {
     try {
       await activate(injected);
       console.log('Successfully connected to MetaMask!');
-      // const isOwnerAddr = await FetchOwner();
-      if (owner == user) {
-        setIsOwner(true);
-      }
+
     } catch (error) {
       console.error('Error on connecting to MetaMask:', error);
     }

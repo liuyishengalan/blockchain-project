@@ -21,19 +21,15 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     
     
     const initializeContract = async() => {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        console.log('Ethereum provider initialized successfully:', provider);
-
         if (!provider) {
             console.error("Provider is not available");
             return;
         }
 
         lottoContract = new Contract(lottoContractAddress, LottoArtifact.abi, provider.getSigner());
-        owner = lottoContract.owner();
-        user = await provider.getSigner().getAddress();
-
+        owner = await lottoContract.owner();
+        // user = await provider.getSigner().getAddress();
+        user = '0x5FbDB2315678afecb367f032d93F642f64180bb3'
     };
 
     // Initialize contract upon hook call
