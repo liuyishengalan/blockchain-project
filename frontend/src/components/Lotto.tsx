@@ -38,8 +38,8 @@ interface MyTicketInfo {
 }
 
 // const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
-// const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
-const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
+const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
+// const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
 export function Lotto(): ReactElement {
   const { library, active, account, activate } = useWeb3React();
   const [lottoContractAddr, setLottoContractAddr] = useState<string>(contractAddress);
@@ -206,10 +206,11 @@ export function Lotto(): ReactElement {
       </Container>
       )
     }
+
     return (
       <Container maxWidth="md" className={shouldAnimate ? 'fade-in' : ''}>
         <Box sx={{ my: 4, textAlign: 'center' }}>
-          <Typography variant="h2" component="h1" gutterBottom marginTop = {20} marginBottom = {15}>
+          <Typography variant="h2" component="h1" gutterBottom marginTop = {10} marginBottom = {10}>
             Lotto 6/49 on Blockchain
           </Typography>
   
@@ -217,9 +218,22 @@ export function Lotto(): ReactElement {
             <Button variant="contained" onClick={handleConnectWallet}>
               {active ? 'Connected' : 'Connect to Metamask'}
             </Button>
-            <Button variant="outlined" onClick={handleBuyTicket} sx={{ ml: 2 }}>
-              Buy a Ticket
-            </Button>
+            {!isOwner && (
+              <Button variant="outlined" onClick={handleBuyTicket} sx={{ ml: 2 }}>
+                Buy a Ticket
+              </Button>)}
+            {isOwner && (
+              <Button variant="contained" onClick={handleAdminLogin} sx={{ 
+                ml: 2, 
+                backgroundColor: 'red', 
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'darkred',
+                }
+                }}>
+                Admin
+              </Button>
+            )}
             <Modal
               open={openBuyTicketModal}
               onClose={handleCloseBuyTicketModal}
@@ -254,9 +268,11 @@ export function Lotto(): ReactElement {
   
           </Box>
           <Box mt={4}>
-            <Button variant="text" onClick={handleCheckResults}>
-              Check Results
-            </Button>
+            {!isOwner && (
+              <Button variant="text" onClick={handleCheckResults}>
+                Check Results
+              </Button>)
+            }
             <Modal
               open={openCheckResultsModal}
               onClose={handleCloseCheckResultsModal}
@@ -264,19 +280,21 @@ export function Lotto(): ReactElement {
               aria-describedby="check-results-modal-description"
             >
               <div style={modalStyle as React.CSSProperties}>
-             
-              <CheckResults
-               handleClose={handleCloseCheckResultsModal} 
-               currentWeek={currentWeek || 0}
-               recentWinner={recentWinner}
-               userRecentTicket = {userRecentTicket}
-               />
+            
+            <CheckResults
+              handleClose={handleCloseCheckResultsModal} 
+              currentWeek={currentWeek || 0}
+              recentWinner={recentWinner}
+              userRecentTicket = {userRecentTicket}
+              />
               
               </div>
             </Modal>
-            <Button variant="text" onClick={handleHowItWorks} sx={{ ml: 2 }}>
-              How It works
-            </Button>
+            {!isOwner && (
+              <Button variant="text" onClick={handleHowItWorks} sx={{ ml: 2 }}>
+                How It works
+              </Button>)
+            }
             <Modal
               open={openHowItWorksModal}
               onClose={handleCloseHowItWorksModal}
@@ -290,11 +308,6 @@ export function Lotto(): ReactElement {
           </Box>
           {/* The Admin Login button can be an IconButton or a simple Button as per your design */}
           <Box mt={2} display="flex" justifyContent="flex-end">
-            {isOwner && (
-              <Button variant="text" onClick={handleAdminLogin} sx={{ ml: 2 }}>
-                Admin
-              </Button>
-            )}
             <Modal
               open={openAdminLoginModal}
               onClose={handleCloseAdminLoginModal}
