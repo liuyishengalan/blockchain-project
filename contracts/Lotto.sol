@@ -109,7 +109,7 @@ contract Lotto649 {
 
         uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
         uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
-        uint256 count = 0;
+        // uint256 count = 0;
 
         for (uint i = 0; i < ticketsByWeek[currentWeek].length; i++) {
             uint256 matchCount = 0;
@@ -170,7 +170,7 @@ contract Lotto649 {
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
     }
 
-    function generateWinningNumbers() onlyOwner public {
+    function generateWinningNumbers() onlyOwner timeForNewPool public {
         for (uint8 i = 0; i < 6; i++) {
             winningNumbers[getCurrentWeek()][i] = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed, i))) % 49) + 1;
             // Ensure unique winning numbers 
@@ -243,7 +243,7 @@ contract Lotto649 {
 
     function getMywinnerForCurrentWeek() external view returns (WinnerInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
-        uint256 wCount = 0;
+        // uint256 wCount = 0;
         WinnerInfo[] memory mywinner = new WinnerInfo[](winnersByWeek[currentWeek].length);
 
         for (uint256 i = 0; i < winnersByWeek[currentWeek].length; i++) {
@@ -301,7 +301,7 @@ contract Lotto649 {
     function getMyTicketsForCertainWeek() external view returns (MyTicketInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
         uint256 ticketCount = 0;
-        uint256 numb = 0;
+        // uint256 numb = 0;
         uint256 lengthT;
         
         // uint8[6] memory numbers = [2,3,4,5,6,7];

@@ -31,8 +31,10 @@ interface MyTicketInfo {
 }
 
 // const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
-const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
+// const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
 // const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
+// const contractAddress = '0x298148B8b08612C6A1D596540CF69A739AfE5C6b';
+const contractAddress = '0xF26e12bde55A652931b772eA2727a59c0Ed5D743';
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -195,16 +197,16 @@ export function Lotto(): ReactElement {
   const handleGenerateWinningNumbers = async () => {
     console.log('request for generating winning numbers sent!');
     setIsGeneratingNumbers(true)
-    let isError = false;
+    let isError_generateNumber = false;
     try {
       const result = await requestGenerateWinningNumbers();
       console.log("Generate numbers successfully", result);
     } catch (error) {
       console.error("Failed to generate numbers", error);
-      isError = true;
+      isError_generateNumber = true;
     } finally {
       // setIsGeneratingNumbers(false); // Stop showing the loading modal
-      if (isError === false) {
+      if (isError_generateNumber === false) {
         alert("Successfully Generated and now starting new round!");
         handleNewLottoRound();
       } else {
