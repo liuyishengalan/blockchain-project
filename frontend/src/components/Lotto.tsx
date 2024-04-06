@@ -20,6 +20,7 @@ import eth_logo from '../assets/eth.gif';
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
 import { CONTRACT_ADDRESSES } from '@thirdweb-dev/react';
+import { use } from 'chai';
 //import io from 'socket.io-client';
 // import TicketDropdown from './TicketDropdown';
 
@@ -135,10 +136,6 @@ export function Lotto(): ReactElement {
     try {
       await activate(injected);
       console.log('Successfully connected to MetaMask!');
-      const isOwnerAddr = await FetchOwner();
-      if (isOwnerAddr) {
-        setIsOwner(true);
-      }
     } catch (error) {
       console.error('Error on connecting to MetaMask:', error);
     }

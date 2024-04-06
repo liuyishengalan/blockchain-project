@@ -19,6 +19,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     
     
     const FetchOwner = async () => {
+        await initializeContract();
         if (!lottoContract) {
             console.error("Lotto contract is not initialized");
             return false;
@@ -26,7 +27,9 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
 
         try {
             const owner = await lottoContract.owner();
+            console.log(owner);
             const user = await provider.getSigner().getAddress();
+            console.log(user);
             if(owner === user){
                 return true;
             }
@@ -35,6 +38,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
             return false;
         }
     }
+
 
     const initializeContract = () => {
         if (!provider) {
@@ -195,7 +199,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     }
     
 
-    // Initialize contract upon hook call
+    // // Initialize contract upon hook call
     initializeContract();
 
     return {
