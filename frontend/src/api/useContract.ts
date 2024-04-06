@@ -28,8 +28,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
 
         lottoContract = new Contract(lottoContractAddress, LottoArtifact.abi, provider.getSigner());
         owner = await lottoContract.owner();
-        // user = await provider.getSigner().getAddress();
-        user = '0x5FbDB2315678afecb367f032d93F642f64180bb3'
+        user = await provider.getSigner().getAddress();
     };
 
     // Initialize contract upon hook call
