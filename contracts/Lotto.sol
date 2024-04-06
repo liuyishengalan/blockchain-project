@@ -57,7 +57,10 @@ contract Lotto649 {
 
 
     modifier timeForNewPool() {
-        require(block.timestamp >= lotteStartTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends");
+
+        // NOTE: testing purposes only, change WEEK_DURATION duration for 5 minutes
+        uint TEST_DURATION = 5 minutes;
+        require(block.timestamp >= lotteStartTimestamp + TEST_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends");
         _;
     }
 

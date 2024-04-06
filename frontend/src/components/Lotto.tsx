@@ -15,6 +15,9 @@ import { useLottoContract } from '../api/useContract'; // Adjust the import path
 import eth_logo from '../assets/eth.gif';
 import load_gif from '../assets/load.gif'
 import { modalStyle } from '../styles/styles';
+import { use } from 'chai';
+
+// import CountdownTimer from './CountdownTimer';
 //import io from 'socket.io-client';
 // import TicketDropdown from './TicketDropdown';
 
@@ -34,7 +37,8 @@ interface MyTicketInfo {
 // const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
 // const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
 // const contractAddress = '0x298148B8b08612C6A1D596540CF69A739AfE5C6b';
-const contractAddress = '0xF26e12bde55A652931b772eA2727a59c0Ed5D743';
+// const contractAddress = '0xF26e12bde55A652931b772eA2727a59c0Ed5D743';
+const contractAddress = '0x092f201002e2Ef5520bD6633c5e6212bfCfcc4AB';
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -65,10 +69,11 @@ export function Lotto(): ReactElement {
     fetchTicket,
     isContractReady,
     isOwner,
+    fetchInitTimestep,
   } = useLottoContract(contractAddress, library);
+
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay() + 7;
-  
   
 
   useEffect(() => {

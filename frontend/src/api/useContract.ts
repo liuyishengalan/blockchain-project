@@ -60,6 +60,8 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         setIsOwner(owner.toLowerCase() === user.toLowerCase());
     }, [owner, user]);
     
+    
+
 
     // Function to fetch winning numbers
     const fetchWinningNumbers = async (): Promise<number[] | undefined> => {
@@ -143,6 +145,21 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             return winners;
         } catch (error) {
             console.error("Failed to fetch recent winners:", error);
+            return;
+        }
+    }
+
+    const fetchInitTimestep = async (): Promise<number | undefined> => {
+        if (!isContractReady || !lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+
+        try {
+            const timestep = await lottoContract.lotteStartTimestamp;
+            return parseInt(timestep); // Convert to milliseconds
+        } catch (error) {
+            console.error("Failed to fetch timestep:", error);
             return;
         }
     }
@@ -244,5 +261,6 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         owner,
         isContractReady,
         isOwner,
+        fetchInitTimestep
     };
 }
