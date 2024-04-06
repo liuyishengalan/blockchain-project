@@ -17,6 +17,7 @@ import HowItWorks from './HowItWorks';
 import CheckResults from './CheckResults';
 import { useLottoContract } from '../api/useContract'; // Adjust the import path as needed
 import eth_logo from '../assets/eth.gif';
+import load_gif from '../assets/load.gif'
 import { modalStyle } from '../styles/styles';
 import { get } from 'http';
 import { CONTRACT_ADDRESSES } from '@thirdweb-dev/react';
@@ -56,10 +57,8 @@ export function Lotto(): ReactElement {
   const [userRecentTicket, setUserTicket] = useState<MyTicketInfo[]>([]);
   const [recentWinner, setWinnerrs] = useState<WinnerInfo[]>([]);
   const [winners, setWinners] = useState<string[]>([]);
-  const [isOwner, setIsOwner] = useState(false);
-  
 
-  const { 
+  const {
     fetchWinningNumbers, 
     fetchCurrentWeek, 
     fetchPrizePool, 
@@ -73,10 +72,13 @@ export function Lotto(): ReactElement {
     // FetchOwner,
     user,
     owner,
+    isContractReady,
+    isOwner,
     // contractInitialized
   } = useLottoContract(contractAddress, library);
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
   const daysLeft = 3 - new Date().getDay() + 7;
+  
   
 
   useEffect(() => {
@@ -115,13 +117,13 @@ export function Lotto(): ReactElement {
         //console.log(winner);
     }
   }
-   
+  if (isContractReady) {
     getNumbers();
     getWeek();
     getPrizePool();
     getfetchTicket();
     getfetchWinner();
-
+  }
   }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool,requestNewLottoRound,fetchWinners,fetchTicket]); //fetchWinners
 
   useEffect(() => {
@@ -129,11 +131,6 @@ export function Lotto(): ReactElement {
       setShouldAnimate(true);
       // Optionally, remove the animation class after the animation ends to avoid re-animating on re-renders
       const timer = setTimeout(() => setShouldAnimate(false), 1000); // Match the animation duration
-
-      if (owner === user) {
-          setIsOwner(true);
-        }
-
       return () => clearTimeout(timer);
 
     }
@@ -197,6 +194,18 @@ export function Lotto(): ReactElement {
 
 
   if (active) {
+    if (!isContractReady) {
+      return (
+        <Container maxWidth="md">
+        <Box sx={{ my: 4, textAlign: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Loading...
+          </Typography>
+          <img src={load_gif} alt="Loading" style={{ width: '300px', height: '300px', marginBottom: '20px'}}/>
+        </Box>
+      </Container>
+      )
+    }
     return (
       <Container maxWidth="md" className={shouldAnimate ? 'fade-in' : ''}>
         <Box sx={{ my: 4, textAlign: 'center' }}>

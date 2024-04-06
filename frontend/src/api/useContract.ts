@@ -1,63 +1,70 @@
+import { useState, useEffect } from 'react';
 import { Contract, ethers } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
 import { textChangeRangeIsUnchanged } from 'typescript';
-import { useState } from 'react';
 
 interface WinnerInfo {
     winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
     matchCount: number;
     numbers: number[]; // uint8[6] in Solidity can be represented as number[] in TypeScript for simplicity
-  }
+}
 
 interface MyTicketInfo {
     numbers: number[];
     prize: number;
 }
-export function useLottoContract(lottoContractAddress: string, provider: Web3Provider) {
-    let lottoContract: Contract | undefined;
-    let owner: string | undefined;
-    let user: string | undefined;
-    
-    
-    const initializeContract = async() => {
-        if (!provider) {
-            console.error("Provider is not available");
-            return;
-        }
 
-        lottoContract = new Contract(lottoContractAddress, LottoArtifact.abi, provider.getSigner());
-        owner = await lottoContract.owner();
-        user = await provider.getSigner().getAddress();
+// Assuming lottoContractAddress and provider are passed correctly from the parent component
+export const useLottoContract = (lottoContractAddress: string, provider: Web3Provider) => {
+    const [lottoContract, setLottoContract] = useState<Contract>();
+    const [owner, setOwner] = useState('');
+    const [user, setUser] = useState('');
+    const [isContractReady, setIsContractReady] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
+
+    useEffect(() => {
+        setIsOwner(owner.toLowerCase() === user.toLowerCase());
+    }, [owner, user]);
+    
+  // Asynchronously initialize the contract and fetch owner and user addresses
+    useEffect(() => {
+
+
+    const initializeContract = async () => {
+        if (!provider) {
+        console.error("Web3 provider is not available.");
+        return;
+        }
+        const signer = provider.getSigner();
+        const contract = new Contract(lottoContractAddress, LottoArtifact.abi, signer);
+        
+        try {
+        await contract.deployed(); // Ensures contract is deployed and accessible
+        setLottoContract(contract);
+        setIsContractReady(true); // Set to true only after successful initialization
+        
+        const contractOwner = await contract.owner();
+        setOwner(contractOwner);
+        const currentUserAddress = await signer.getAddress();
+        setUser(currentUserAddress);
+        } catch (error) {
+        console.error("Failed to initialize the contract or fetch addresses: ", error);
+        setIsContractReady(false);
+        }
     };
 
-    // Initialize contract upon hook call
     initializeContract();
+    }, [provider, lottoContractAddress]);
 
-
-    const isOwner = async () => {
-        await initializeContract();
-        if (!lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return;
-        }
-
-        try {
-            const owner = await lottoContract.owner();
-            const user = await provider.getSigner().getAddress();
-            if(owner === user){
-                return true;
-            }
-        } catch (error) {
-            console.error("Failed to fetch owner:", error);
-            return false;
-        }
-    }
-
+    useEffect(() => {
+        setIsOwner(owner.toLowerCase() === user.toLowerCase());
+    }, [owner, user]);
+    
 
     // Function to fetch winning numbers
     const fetchWinningNumbers = async (): Promise<number[] | undefined> => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
@@ -74,7 +81,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     // Function to fetch the current week
 
     const fetchCurrentWeek = async (): Promise<number | undefined> => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
@@ -89,7 +96,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     };
 
     const fetchPrizePool = async (): Promise<string | undefined> => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
@@ -105,7 +112,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     }
 
     const fetchTicket = async (): Promise<MyTicketInfo[] | undefined> => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
@@ -123,11 +130,11 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
 
 
     const fetchWinners = async (): Promise<WinnerInfo[] | undefined>=> {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
-       
+        
         try {
             const winners = await lottoContract.getMywinnerForCertainWeek();
             // if (!winners || winners.length === 0) {
@@ -142,7 +149,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     }
 
     const requestBuyTicket = async (ticketNumbers: number[]) => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
@@ -159,7 +166,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     };
 
     const requestGenerateWinningNumbers = async () => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
         }
@@ -189,7 +196,7 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
     // }
 
     const requestNewLottoRound = async (): Promise<boolean|undefined> => {
-        if (!lottoContract) {
+        if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return; 
         }
@@ -215,8 +222,9 @@ export function useLottoContract(lottoContractAddress: string, provider: Web3Pro
         requestNewLottoRound,
         fetchWinners,
         fetchTicket,
-        isOwner,
         user,
         owner,
+        isContractReady,
+        isOwner,
     };
 }
