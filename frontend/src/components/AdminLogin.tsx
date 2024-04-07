@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button,TextField, Box, Typography, Grid, TableContainer, TableHead,TableRow,TableCell,TableBody,Table  } from '@mui/material';
 import Paper from '@mui/material/Paper';
 
@@ -31,25 +31,22 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   // const [initResult, setinitResult] = React.useState<string>();
 
 
+  // Use useEffect to react to changes in generatedWinningNumbers
+  useEffect(() => {
+    if (generatedWinningNumbers.length > 0) {
+      setWinningNumbers(generatedWinningNumbers);
+      setNumberGenerated(true);
+    }
+  }, [generatedWinningNumbers]);
+
   // Function to fetch the winning numbers
   const handleWinningNumbers = async () => {
-    // Fetch the winning numbers
-
-    //TODO: check if it's ok to generate new round
-    // CHECK TIME and STATUS
-
-    handleGenerateRequest(); // new round is triggred inside this function
-    const numbers = generatedWinningNumbers;
-    // INCORRECT
-    if (numbers) {
-      setWinningNumbers(numbers);
-      setNumberGenerated(true);
-      // requestNewLottoRound();
-      // window.alert('Winning numbers generated successfully and new round initialized!');
-    }
+    // Trigger the generation of new numbers and the start of a new lotto round
+    await handleGenerateRequest();
+    // The state update for winningNumbers is now handled by the useEffect hook
   };
 
-  const handleShowWinners = async () => {
+  const handleShowWinners = () => {
     setShowWinners(true);
     const winners = winnersAdd;
     if (winners) setWinnersAdd(winners);
