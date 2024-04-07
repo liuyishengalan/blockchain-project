@@ -25,17 +25,28 @@ interface MyTicketInfo {
 
 interface CheckResultProps {
   handleClose: () => void;
+  handleWithdraw: () => void;
+ 
   currentWeek: number;
   recentWinner: WinnerInfo[];
   userRecentTicket: MyTicketInfo[];
+  winnumm: number[];
 }
 
 const CheckResults: React.FC<CheckResultProps> = ({
   handleClose,
+  handleWithdraw,
   currentWeek,
   recentWinner,
   userRecentTicket,
+  winnumm,
 }) => {
+
+
+  const onWithdraw = () => {
+   
+    handleWithdraw();
+  };
  
   return (
     <div>
@@ -108,7 +119,11 @@ const CheckResults: React.FC<CheckResultProps> = ({
       </Box>
   
     </Box>
-    
+     <Box display="flex"  justifyContent="right" width="100%" marginTop={4}>
+          <Button variant="contained" onClick={onWithdraw}>
+            Withdraw Current Week Prize
+          </Button>
+     </Box>
     <Box display="flex" justifyContent="flex-start" width="100%" marginTop={2}>
     <Button onClick={handleClose}>Close</Button>
     </Box>
