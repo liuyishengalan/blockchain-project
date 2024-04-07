@@ -42,7 +42,8 @@ interface MyTicketInfo {
 // const contractAddress = '0xF26e12bde55A652931b772eA2727a59c0Ed5D743';
 // const contractAddress = '0x092f201002e2Ef5520bD6633c5e6212bfCfcc4AB';
 // const contractAddress = '0x1B9127c4483567a49f921e325F600505F4132D4A';
-const contractAddress = '0x2a65Ab5805757Bfd323946F78cfFAb771AFA86D9' //chris 
+// const contractAddress = '0x2a65Ab5805757Bfd323946F78cfFAb771AFA86D9' //chris 
+const contractAddress = '0x1B9127c4483567a49f921e325F600505F4132D4A'; //yisheng
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -157,7 +158,7 @@ export function Lotto(): ReactElement {
     if(true){
       try {
         const result = await requestPrizeDistribution();
-        console.log("requestion for prize distribution sent:", result.success);
+        console.log("requestion for prize distribution sent backed:", result.success);
         return result.receipt;
       } catch (error) {
         console.error("Failed to generate numbers", error);
