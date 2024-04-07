@@ -182,10 +182,8 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
                 ) : (
                   prizeNcounts.map((item, index) => ( 
                     <TableRow key={index}>
-                        <TableCell component="th" scope="row" key={index}>
                         <TableCell align="center">{item.prize}</TableCell>
                         <TableCell align="center">{item.count}</TableCell>
-                      </TableCell>
                     </TableRow>
                   ))
                 )
@@ -197,38 +195,6 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
             </TableBody>
             </Table>
           </TableContainer>
-{/* 
-
- */}
-          {/* <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">Winning Prize</TableCell><TableCell align="center">Winning Counts</TableCell> 
-                </TableRow>
-              </TableHead>
-              <TableBody>
-              {numberGenerated ? (
-                prizeNcounts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={3} align="center"><span role="img" aria-label="sad">☹️</span></TableCell>
-                  </TableRow>
-                ) : (
-                  prizeNcounts.map((item, index) => ( 
-                    <TableRow key={index}>
-                      <TableCell align="center">{item.prize}</TableCell>
-                      <TableCell align="center">{item.count}</TableCell>
-                    </TableRow>
-                  ))
-                )
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={3} align="center" style={{ color: 'red' }} >Winning number is not generatede yet</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-            </Table>
-          </TableContainer> */}
           </div>
         </Box>
         
