@@ -10,9 +10,12 @@ interface AdminLoginProps {
   prizePool: string; 
   timeRemaining: number; 
   requestNewLottoRound: () => Promise<boolean | undefined>;
+  handlePrizeDistribution: () => Promise<PrizeNcounts | undefined>;
 }
-
-
+export interface PrizeNcounts {
+  prize: string;
+  count: number;
+}
 
 const AdminLogin: React.FC<AdminLoginProps>  = ({ 
   handleClose, 
@@ -22,12 +25,17 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   prizePool, 
   timeRemaining,
   requestNewLottoRound,
+  handlePrizeDistribution,
  }) => {
   // State to store the winning numbers
   const [winningNumbers, setWinningNumbers] = React.useState<number[]>([]);
   const [winnersAdd, setWinnersAdd] = React.useState<string[]>([]);
   const [showWinners, setShowWinners] = React.useState(false);
+
   const [numberGenerated, setNumberGenerated] = React.useState(false);
+
+  const [prizeNcounts, setPrizeNcounts] = React.useState<PrizeNcounts[]>([]);
+  const [showPrizeNcounts, setShowPrizeNcounts] = React.useState(false);
   // const [initResult, setinitResult] = React.useState<string>();
 
 
@@ -47,27 +55,33 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   };
 
   const handleShowWinners = () => {
-    setShowWinners(true);
     const winners = winnersAdd;
-    if (winners) setWinnersAdd(winners);
+    if (winners) {
+      setWinnersAdd(winners)
+      setShowWinners(true);};
   }
 
-
+  const distributePrize = async () => {
+    const prizeNcount = await handlePrizeDistribution();
+    if (prizeNcount) {
+      setPrizeNcounts([prizeNcount])
+      setShowPrizeNcounts(true);};
+  }
 
   return (
 
     <Grid container spacing={2}>
+
       <Grid item xs={12}>
         <Typography variant="h4" align="center">
         Admin Page
         </Typography>
       </Grid>
+
       {/* Left column */}
       <Grid item xs={6}>
         <Box marginLeft={10} marginRight={10} marginTop={5}>
-
         <Typography variant='overline'> Current Pool Info </Typography>
-
         <Typography variant="subtitle1" gutterBottom>
           Total Prize Pool: 
           {prizePool} Ethers
@@ -76,9 +90,9 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           Time Remaining: 
           {timeRemaining} Days
         </Typography>
-
         </Box>
       </Grid>
+
       {/* Right column */}
       <Grid item xs={6}>
         <div style={{ display: 'flex' }}>
@@ -143,38 +157,89 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
             </TableBody>
             </Table>
           </TableContainer>
-
-
-
-{/* 
-          {showWinners && (
-            <div style={{ marginTop: '10px' }}>
-              {winners.length === 0 ? (
-                <Typography variant="body1" style={{ color: '#777' }}>
-                Unfortunately, No winners <span role="img" aria-label="sad">☹️</span>
-                </Typography>
-              ) : (
-                winners.map((item, index) => (
-                  <div key={index}>{item}</div>
-                ))
-              )}
-            </div>
-          )} */}
         </div>
         </Box>
 
-      {/* <Box display="flex" justifyContent="center" marginTop={5}>
-        <Button variant="contained" onClick={handleNewLottoRound} style={{ width: '300px' }}> Initialize New Lotto Round</Button>
-      </Box> */}
+        <Box display="flex" justifyContent="center" marginTop={5} marginRight={10}>
+          <div>
+          <Button variant="contained" onClick={distributePrize} style={{ width: '300px' }}>
+          View Prize Distribution
+          </Button>
+
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
+              <TableHead>
+                <TableRow>
+                <TableCell align="center">Winning Prize</TableCell><TableCell align="center">Winning Counts</TableCell> 
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {numberGenerated ? (
+                prizeNcounts.length === 0 && showPrizeNcounts ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell>
+                  </TableRow>
+                ) : (
+                  prizeNcounts.map((item, index) => ( 
+                    <TableRow key={index}>
+                        <TableCell component="th" scope="row" key={index}>
+                        <TableCell align="center">{item.prize}</TableCell>
+                        <TableCell align="center">{item.count}</TableCell>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} align="center" style={{ color: 'red' }} >Winning number is not generatede yet</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+            </Table>
+          </TableContainer>
+{/* 
+
+ */}
+          {/* <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Winning Prize</TableCell><TableCell align="center">Winning Counts</TableCell> 
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {numberGenerated ? (
+                prizeNcounts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center"><span role="img" aria-label="sad">☹️</span></TableCell>
+                  </TableRow>
+                ) : (
+                  prizeNcounts.map((item, index) => ( 
+                    <TableRow key={index}>
+                      <TableCell align="center">{item.prize}</TableCell>
+                      <TableCell align="center">{item.count}</TableCell>
+                    </TableRow>
+                  ))
+                )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} align="center" style={{ color: 'red' }} >Winning number is not generatede yet</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+            </Table>
+          </TableContainer> */}
+          </div>
+        </Box>
+        
 
       </Grid>
+      
       <Grid item xs={12} container justifyContent="flex-end">
         <Button onClick={handleClose} >Close</Button>
-
       </Grid>
+
     </Grid>
-    
-    
   );
 };
 

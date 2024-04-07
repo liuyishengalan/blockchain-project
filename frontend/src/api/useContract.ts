@@ -80,7 +80,6 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
     };
 
     // Function to fetch the current week
-
     const fetchCurrentWeek = async (): Promise<number | undefined> => {
         if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
@@ -148,40 +147,8 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             return;
         }
     }
-    const fetchwithdrawdata = async (): Promise<boolean | undefined>=> {
-        if (!isContractReady || !lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return;
-        }
-        
-        try {
-            const winners = await lottoContract.getMywinnerForCurrentWeek();
-            const tickets = await lottoContract.getMyTicketsForCurrentWeek();
-            let check = false;
-            if (!tickets || tickets.length === 0) {
-                //console.log("No winners found for the current week");
-                return check;
-            } else{
-                for(let i = 0; i< winners.length;i++){
-                    if (winners[i].winner == tickets[0].entrant){
-                        check = true;
-                    }
-                }
-                if (check){
-                    await lottoContract.withdrawWinnings();
-                }
-                return check;
-            }
 
-
-            return winners;
-        } catch (error) {
-            console.error("Failed to fetch recent winners:", error);
-            return;
-        }
-    }
-
-    const fetchInitTimestep = async (): Promise<number | undefined> => {
+    const fetchInitTimestep = async () => {
         if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
             return;
@@ -244,21 +211,28 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         }
     };
 
-    // const fetchAnnounceWinnersandPrize = async () : Promise<string[] | undefined> => {
-    //     if (!lottoContract) {
-    //         console.error("Lotto contract is not initialized");
-    //         return;
-    //     }
+    const requestPrizeDistribution = async () => {
+        if (!isContractReady || !lottoContract) {
+            throw new Error("Lotto contract is not initialized");
+        }
     
-    //     try {
-    //         await lottoContract.announceWinners();
-    //         const tx= await lottoContract.getMywinnerForCurrentWeek();
-    //         console.log("announce winners successfully");
-    //         return tx;
-    //     } catch (error) {
-    //         console.error("Failed to announce winners:", error);
-    //     }
-    // }
+        try {
+            const tx= await lottoContract.announceWinners({
+                value: ethers.utils.parseEther("0"),
+            });
+            const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                console.log("Winners and prize distribution request successfully");
+                return {success: true, receipt: receipt};
+            }else{
+                console.error("Transaction failed without a success receipt.");
+                return { success: false, error: "Transaction failed without a success receipt." };
+            }
+        } catch (error) {
+            console.error("Failed to fetch prize distribution:", error);
+            return { success: false, error: error};
+        }
+    }
 
     const requestNewLottoRound = async (): Promise<boolean|undefined> => {
         if (!isContractReady || !lottoContract) {
@@ -294,6 +268,6 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         isContractReady,
         isOwner,
         fetchInitTimestep,
-        fetchwithdrawdata,
+        requestPrizeDistribution
     };
 }

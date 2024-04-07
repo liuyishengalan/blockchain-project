@@ -102,7 +102,7 @@ contract Lotto649 {
     }
 
 
-    function announceWinners() public onlyOwner winningNumAnnounced {
+    function announceWinners() public onlyOwner winningNumAnnounced returns (uint256[4] memory,uint256[4] memory) {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
 
@@ -171,6 +171,8 @@ contract Lotto649 {
         }
 
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
+
+        return (winningPrizes,winnerCounts);
     }
 
     function generateWinningNumbers() public onlyOwner timeForNewPool {

@@ -9,6 +9,7 @@ import { Button, Typography, Box, Container, Paper, Grid, Modal, CircularProgres
 import { injected } from '../utils/connectors';
 import BuyTicket from './BuyTicket';
 import AdminLogin from './AdminLogin';
+import {PrizeNcounts} from './AdminLogin';
 import HowItWorks from './HowItWorks';
 import CheckResults from './CheckResults';
 import { useLottoContract } from '../api/useContract'; // Adjust the import path as needed
@@ -33,14 +34,15 @@ interface MyTicketInfo {
   prize: number;
 }
 
+
 // const contractAddress = '0xDa54AC55D9EB40952CC4418AE184561b8A7FC58E';
 // const contractAddress = '0x83cc3b797C05535c60DadDDe849bf1580E20ca66';
 // const contractAddress = '0x46CB85d0c7f0D541eD612D8a0cD794D720fcA78D';
 // const contractAddress = '0x298148B8b08612C6A1D596540CF69A739AfE5C6b';
 // const contractAddress = '0xF26e12bde55A652931b772eA2727a59c0Ed5D743';
 // const contractAddress = '0x092f201002e2Ef5520bD6633c5e6212bfCfcc4AB';
-const contractAddress = '0x1B9127c4483567a49f921e325F600505F4132D4A';
-//const contractAddress = '0x2E2EB77b1df59a397f1776C17055c8e868fd8686'
+// const contractAddress = '0x1B9127c4483567a49f921e325F600505F4132D4A';
+const contractAddress = '0x2a65Ab5805757Bfd323946F78cfFAb771AFA86D9' //chris 
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -73,10 +75,16 @@ export function Lotto(): ReactElement {
     isContractReady,
     isOwner,
     fetchInitTimestep,
-    fetchwithdrawdata,
+    requestPrizeDistribution,
+    // fetchwithdrawdata,
   } = useLottoContract(contractAddress, library);
 
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
+  // const currentDayOfWeek = new Date().getDay();
+  // const initTimestemp = await fetchInitTimestep;
+  // const initDate = new Date(initTimestemp * 1000);
+  // const 
+
   const daysLeft = 3 - new Date().getDay() + 7;
   
 
@@ -123,7 +131,15 @@ export function Lotto(): ReactElement {
     getfetchTicket();
     getfetchWinner();
   }
-  }, [library, fetchWinningNumbers, fetchCurrentWeek, fetchPrizePool,requestNewLottoRound,fetchWinners,fetchTicket,fetchwithdrawdata]); //fetchWinners
+  }, [library, 
+    fetchWinningNumbers, 
+    fetchCurrentWeek, 
+    fetchPrizePool,
+    requestNewLottoRound,
+    fetchWinners,
+    fetchTicket,
+    // fetchwithdrawdata,
+  ]); //fetchWinners
 
   useEffect(() => {
     if (active) {
@@ -134,6 +150,30 @@ export function Lotto(): ReactElement {
 
     }
   }, [active]);
+
+  const handlePrizeDistribution = async () => {
+    let isError_generateNumber = false;
+    setIsGeneratingNumbers(true);
+    if(true){
+      try {
+        const result = await requestPrizeDistribution();
+        console.log("requestion for prize distribution sent:", result.success);
+        return result.receipt;
+      } catch (error) {
+        console.error("Failed to generate numbers", error);
+        isError_generateNumber = true; 
+      } finally {
+        if (isError_generateNumber === false) {
+          alert("Successfully distrubted prize!");
+        } else {
+          setIsGeneratingNumbers(false);
+          alert("Operation Cancelled!");
+        }
+      }
+    } else {
+      alert("Please wait for winning number generation before distribute prize!");
+    }
+  }
 
   const handleConnectWallet = useCallback(async () => {
     // Since we're inside a callback, we don't use the hook here, 
@@ -202,15 +242,15 @@ export function Lotto(): ReactElement {
   };
   
   
-  const handlewithdraw = async () => {
-    const checkwithdraw = await fetchwithdrawdata();
-    if(checkwithdraw) {setWin(checkwithdraw)};
-    if (checkwithdraw){
-      alert("Successfully withdraw! Please check your account");
-    } else {
-      alert("You have noting to withdraw with!");
-    }
-  };
+  // const handlewithdraw = async () => {
+  //   const checkwithdraw = await fetchwithdrawdata();
+  //   if(checkwithdraw) {setWin(checkwithdraw)};
+  //   if (checkwithdraw){
+  //     alert("Successfully withdraw! Please check your account");
+  //   } else {
+  //     alert("You have noting to withdraw with!");
+  //   }
+  // };
 
   const handleGenerateWinningNumbers = async () => {
     console.log('request for generating winning numbers sent!');
@@ -364,14 +404,14 @@ export function Lotto(): ReactElement {
             >
               <div style={modalStyle as React.CSSProperties}>
             
-            <CheckResults
+            {/* <CheckResults
               handleClose={handleCloseCheckResultsModal} 
               handleWithdraw = {handlewithdraw}
               currentWeek={currentWeek || 0}
               recentWinner={recentWinner}
               userRecentTicket = {userRecentTicket}
               winnumm = {winningNumbers}
-              />
+              /> */}
               
               </div>
             </Modal>
@@ -408,6 +448,7 @@ export function Lotto(): ReactElement {
                   prizePool={prizePool || ''}
                   timeRemaining={daysLeft}
                   requestNewLottoRound={requestNewLottoRound}
+                  handlePrizeDistribution={handlePrizeDistribution}
                 />
               </div>
             </Modal>
