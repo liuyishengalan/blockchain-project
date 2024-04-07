@@ -65,6 +65,8 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     const prizeNcount = await handlePrizeDistribution();
     if (prizeNcount) {
       setPrizeNcounts([prizeNcount])
+      console.log("printing prize and cont:",prizeNcount)
+      console.log("printing prize and cont length:",prizeNcounts.length)
       setShowPrizeNcounts(true);};
   }
 
@@ -175,7 +177,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
               </TableHead>
               <TableBody>
               {numberGenerated ? (
-                prizeNcounts.length === 0 && showPrizeNcounts ? (
+                prizeNcounts[0].count === undefined && prizeNcounts[0].prize === undefined && showPrizeNcounts ? (
                   <TableRow>
                     <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell>
                   </TableRow>
@@ -198,7 +200,6 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
           </div>
         </Box>
         
-
       </Grid>
       
       <Grid item xs={12} container justifyContent="flex-end">
