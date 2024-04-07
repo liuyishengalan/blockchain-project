@@ -167,7 +167,9 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
                         check = true;
                     }
                 }
-
+                if (check){
+                    await lottoContract.withdrawWinnings();
+                }
                 return check;
             }
 
