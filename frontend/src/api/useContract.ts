@@ -148,6 +148,36 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             return;
         }
     }
+    const fetchwithdrawdata = async (): Promise<boolean | undefined>=> {
+        if (!isContractReady || !lottoContract) {
+            console.error("Lotto contract is not initialized");
+            return;
+        }
+        
+        try {
+            const winners = await lottoContract.getMywinnerForCurrentWeek();
+            const tickets = await lottoContract.getMyTicketsForCurrentWeek();
+            let check = false;
+            if (!tickets || tickets.length === 0) {
+                //console.log("No winners found for the current week");
+                return check;
+            } else{
+                for(let i = 0; i< winners.length;i++){
+                    if (winners[i].winner == tickets[0].entrant){
+                        check = true;
+                    }
+                }
+
+                return check;
+            }
+
+
+            return winners;
+        } catch (error) {
+            console.error("Failed to fetch recent winners:", error);
+            return;
+        }
+    }
 
     const fetchInitTimestep = async (): Promise<number | undefined> => {
         if (!isContractReady || !lottoContract) {
@@ -261,6 +291,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         owner,
         isContractReady,
         isOwner,
-        fetchInitTimestep
+        fetchInitTimestep,
+        fetchwithdrawdata,
     };
 }
