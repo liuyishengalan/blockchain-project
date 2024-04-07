@@ -177,9 +177,10 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
               </TableHead>
               <TableBody>
               {numberGenerated ? (
-                prizeNcounts[0].count === undefined && prizeNcounts[0].prize === undefined && showPrizeNcounts ? (
+                prizeNcounts === undefined || prizeNcounts.length === 0 && showPrizeNcounts ? (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell>
+                    <TableCell align = "center">No Winners</TableCell><TableCell align = "center">No Winners</TableCell>
+                    {/* <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell> */}
                   </TableRow>
                 ) : (
                   prizeNcounts.map((item, index) => ( 

@@ -5,7 +5,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { Button, Typography, Box, Container, Paper, Grid, Modal, CircularProgress } from '@mui/material';
+import { Button, Typography, Box, Container, Paper, Grid, Modal, CircularProgress, duration } from '@mui/material';
 import { injected } from '../utils/connectors';
 import BuyTicket from './BuyTicket';
 import AdminLogin from './AdminLogin';
@@ -76,13 +76,20 @@ export function Lotto(): ReactElement {
   } = useLottoContract(contractAddress, library);
 
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
-  // const currentDayOfWeek = new Date().getDay();
-  // const initTimestemp = await fetchInitTimestep;
-  // const initDate = new Date(initTimestemp * 1000);
-  // const 
 
-  const daysLeft = 3 - new Date().getDay() + 7;
-  
+ // TODO : Implement the logic to calculate the days left for the current round to end
+  const daysLeft = 1;
+ 
+  // const daysLeft = async () => {
+  //   const initTime = await fetchInitTimestep();
+  //   const initDate = new Date((initTime ?? 0) * 1000);
+  //   const currentDay = new Date();
+  //   const diff = currentDay.getTime() - initDate.getTime();
+  //   const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  //   return diffDays<=7? 7 - (diffDays % 7): 0;
+  // }
+
+    
 
   useEffect(() => {
     if (!library) {
@@ -154,13 +161,13 @@ export function Lotto(): ReactElement {
       try {
         const result = await requestPrizeDistribution();
         console.log("requestion for prize distribution sent backed:", result.success);
-        return result.receipt;
+        setIsTransactionProcessing(false);
+        return result.receipt;        
       } catch (error) {
         console.error("Failed to generate numbers", error);
         isError_distributePrize = true; 
       } finally {
         if (isError_distributePrize === false) {
-          setIsTransactionProcessing(false);
           alert("Successfully distrubted prize!");
         } else {
           alert("Operation Cancelled!");
