@@ -30,7 +30,7 @@ interface CheckResultProps {
   currentWeek: number;
   recentWinner: WinnerInfo[];
   userRecentTicket: MyTicketInfo[];
-  winnumm: number[];
+  
 }
 
 const CheckResults: React.FC<CheckResultProps> = ({
@@ -39,13 +39,12 @@ const CheckResults: React.FC<CheckResultProps> = ({
   currentWeek,
   recentWinner,
   userRecentTicket,
-  winnumm,
+  
 }) => {
 
 
   const onWithdraw = () => {
-   
-    handleWithdraw();
+     handleWithdraw();
   };
  
   return (
@@ -120,7 +119,8 @@ const CheckResults: React.FC<CheckResultProps> = ({
   
     </Box>
      <Box display="flex"  justifyContent="right" width="100%" marginTop={4}>
-          <Button variant="contained" onClick={onWithdraw}>
+          <Button variant="contained" onClick={onWithdraw} >  
+          {/* onClick={onWithdraw} */}
             Withdraw Current Week Prize
           </Button>
      </Box>

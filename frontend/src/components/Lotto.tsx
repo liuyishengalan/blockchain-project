@@ -72,7 +72,8 @@ export function Lotto(): ReactElement {
     isOwner,
     fetchInitTimestep,
     requestPrizeDistribution,
-    // fetchwithdrawdata,
+    fetchwithdrawdata,
+    
   } = useLottoContract(contractAddress, library);
 
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
@@ -120,6 +121,7 @@ export function Lotto(): ReactElement {
       if (tickectt) setUserTicket(tickectt);
     }
 
+
     const getfetchWinner = async () => {
       const winner = await fetchWinners();
       if (winner) {
@@ -141,8 +143,9 @@ export function Lotto(): ReactElement {
     requestNewLottoRound,
     fetchWinners,
     fetchTicket,
-    // fetchwithdrawdata,
-  ]); //fetchWinners
+    fetchwithdrawdata,
+    
+  ]); 
 
   useEffect(() => {
     if (active) {
@@ -245,15 +248,42 @@ export function Lotto(): ReactElement {
   };
   
   
-  // const handlewithdraw = async () => {
-  //   const checkwithdraw = await fetchwithdrawdata();
-  //   if(checkwithdraw) {setWin(checkwithdraw)};
-  //   if (checkwithdraw){
-  //     alert("Successfully withdraw! Please check your account");
-  //   } else {
-  //     alert("You have noting to withdraw with!");
-  //   }
-  // };
+  const handlewithdraw = async () => {
+    const check = await fetchwithdrawdata();
+    if(check) {setWin(check)};
+    // if (!checkwithdraw || checkwithdraw.length == 0){
+    //   alert("You have noting to withdraw with!");
+    // } else {
+    //   let check = 0;
+    //   let checktrue = false;
+    //   for (let i = 0; i < checkwithdraw.length;i++){
+    //     for (let j = 0; j < 6;j++){
+    //       for (let k = 0; k < 6;k++){
+    //       if (checkwithdraw[i].numbers[j] == winningNumbers[k]){
+    //           check++;
+    //         }
+    //     }
+    //   }
+    //   if (check > 3){
+    //     checktrue = true;
+    //   }
+    //   check = 0;
+    // }
+
+    // if(checktrue){
+    //   handlewithdrawaction();
+    //   alert("Successfullt Withdraw! Check your account.");
+    // }else {
+    //   alert("You have noting to withdraw with!");
+    // }
+    if(checkwithdraw){
+      alert("Successfullt Withdraw! Check your account.");
+    }else{
+      alert("You have noting to withdraw with!");
+    }
+    
+  }
+
 
   const handleGenerateWinningNumbers = async () => {
     console.log('request for generating winning numbers sent!');
@@ -407,14 +437,13 @@ export function Lotto(): ReactElement {
             >
               <div style={modalStyle as React.CSSProperties}>
             
-            {/* <CheckResults
+            <CheckResults
               handleClose={handleCloseCheckResultsModal} 
               handleWithdraw = {handlewithdraw}
               currentWeek={currentWeek || 0}
               recentWinner={recentWinner}
               userRecentTicket = {userRecentTicket}
-              winnumm = {winningNumbers}
-              /> */}
+              />
               
               </div>
             </Modal>

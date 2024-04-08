@@ -16,7 +16,7 @@ describe("Lotto649", function () {
         const Lotto649 = await ethers.getContractFactory("Lotto649");
         //await Lotto649.waitForDeployment();
         const lotto = await Lotto649.deploy();
-        const ticketPrice = ethers.parseEther("1.0");
+        const ticketPrice = ethers.parseEther("1");
         //await lotto.deployed();
         //startAt = Math.floor(Date.now() / 1000); // current timestamp in seconds
         return {lotto,owner, player1, player2,ticketPrice};
@@ -113,8 +113,8 @@ describe("Lotto649", function () {
     it("should correctly announce multiple winners and assign prizes", async function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
         const expectedPrizePlayer1 = ethers.parseEther("1000");
-        const expectedPrizePlayer2 = ethers.parseEther("0.27");
-        const expectedPrizeOwner = ethers.parseEther("0.27");
+        const expectedPrizePlayer2 = ethers.parseEther("0.135");
+        const expectedPrizeOwner = ethers.parseEther("0.135");
     
         await lotto.connect(owner).generateWinningNumbers();
         const nums = (await lotto.getWinningNumsForCurrentWeek());
@@ -232,5 +232,120 @@ describe("Lotto649", function () {
         await expect(lotto.connect(player1).purchaseTicket(numbers, { value: ticketPrice}))
             .to.be.revertedWith("Purchases are not within the allowed week");
     });
+
+
+
+    it("should correctly use Certain ticket function", async function () {
+        const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
+    
+        await lotto.connect(owner).generateWinningNumbers();
+        const nums = (await lotto.getWinningNumsForCurrentWeek());
+        const mutableNums = [...nums];
+        for (let i =0; i <6;i++){
+            mutableNums[i] = Number(nums[i])
+        }
+        
+        // Generate non-winning numbers
+        const nums2 = [];
+        let count = 0;
+        for (let i = 1; i <= 49; i++) {
+            if (count === 6) break;
+            let unique = true;
+            for (let j = 0; j < 6; j++) {
+                if (i === mutableNums[j]) {
+                    unique = false;
+                    break;
+                }
+            }
+            if (unique) {
+                nums2.push(i);
+                count++;
+            }
+        }
+        //console.log(nums,nums2,mutableNums);
+        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice });
+        await lotto.connect(player2).purchaseTicket(nums2, { value: ticketPrice, });
+        await lotto.connect(player2).purchaseTicket(mutableNums, { value: ticketPrice }); //, gasLimit: 10000000
+        await lotto.connect(player1).purchaseTicket(nums2, { value: ticketPrice });
+    
+        const ticket1 = await lotto.connect(player1).getMyTicketsForCertainWeek();
+        for(let i = 0; i < 6; i++){
+            expect(ticket1[0].numbers[i]).to.equal(mutableNums[i]);
+        }
+        expect(ticket1[0].prize).to.equal(0, "Incorrect prize amount for player1");
+        for(let i = 0; i < 6; i++){
+            expect(ticket1[1].numbers[i]).to.equal(nums2[i]);
+        }
+
+        await lotto.connect(owner).announceWinners();
+    
+        const ticket12 = await lotto.connect(player1).getMyTicketsForCertainWeek();
+
+        expect(ticket12.length).to.equal(2, "Incorrect Length")
+        for(let i = 0; i < 6; i++){
+            expect(ticket12[0].numbers[i]).to.equal(mutableNums[i]);
+        }
+        expect(ticket12[0].prize).to.equal(1, "Incorrect prize amount for player1");
+        
+    });
+
+    it("should correctly use Certain winner function", async function () {
+        const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
+    
+        await lotto.connect(owner).generateWinningNumbers();
+        const nums = (await lotto.getWinningNumsForCurrentWeek());
+        const mutableNums = [...nums];
+        for (let i =0; i <6;i++){
+            mutableNums[i] = Number(nums[i])
+        }
+        
+        // Generate non-winning numbers
+        const nums2 = [];
+        let count = 0;
+        for (let i = 1; i <= 49; i++) {
+            if (count === 6) break;
+            let unique = true;
+            for (let j = 0; j < 6; j++) {
+                if (i === mutableNums[j]) {
+                    unique = false;
+                    break;
+                }
+            }
+            if (unique) {
+                nums2.push(i);
+                count++;
+            }
+        }
+        //console.log(nums,nums2,mutableNums);
+        await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice });
+        await lotto.connect(player2).purchaseTicket([mutableNums[0],mutableNums[1],mutableNums[2],mutableNums[3],nums2[0],nums2[1]], { value: ticketPrice, });
+        await lotto.connect(player2).purchaseTicket(nums2, { value: ticketPrice }); //, gasLimit: 10000000
+        await lotto.connect(player1).purchaseTicket(nums2, { value: ticketPrice });
+        
+        await lotto.connect(owner).announceWinners();
+    
+        const ticket1 = await lotto.getMywinnerForCertainWeek();
+        
+        expect(ticket1[0].winner).to.equal(player1, "Incorrect address amount for player1");
+
+        for(let i = 0; i < 6; i++){
+            expect(ticket1[0].numbers[i]).to.equal(mutableNums[i]);
+        }
+
+        expect(ticket1[0].matchCount).to.equal(6, "Incorrect match count amount for player1");
+        
+        expect(ticket1[1].winner).to.equal(player2, "Incorrect address amount for player2");
+
+        for(let i = 0; i < 4; i++){
+            expect(ticket1[1].numbers[i]).to.equal(mutableNums[i]);
+        }
+        for(let i = 0; i < 2; i++){
+            expect(ticket1[1].numbers[i+4]).to.equal(nums2[i]);
+        }
+
+        expect(ticket1[1].matchCount).to.equal(4, "Incorrect match count amount for player2");
+        
+    });
+
 
 });
