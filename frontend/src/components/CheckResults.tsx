@@ -52,12 +52,19 @@ const CheckResults: React.FC<CheckResultProps> = ({
       <Typography variant="h3" id="check-results-modal-title" gutterBottom>
         Check Result
       </Typography>
+      <Box mt={2}  display="flex" justifyContent="center">
+        <List style={{ fontSize: '20px' }}>
+        <ListItem >1. Both tables display data from the last three weeks.</ListItem>
+        <ListItem>2. Before announcing the current winning number, the prize for the MyTicket table will be 0; 
+          after the prize has been announced, it will show the prize amount from 1 to 5, with the smallest being the highest prize.</ListItem>
+        </List>
+      </Box>
       
       
     <Box  mt={2} display="flex" flexDirection="row">
       <Box mt={2} marginRight={2}>
         <Typography variant="h5" id="check-results-modal-title" gutterBottom>
-        Recent Winners 'Within 3 weeks'
+        Recent Winners 
         </Typography>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -75,7 +82,7 @@ const CheckResults: React.FC<CheckResultProps> = ({
                     {winner.winner}
                   </TableCell>
                   <TableCell align="right">{winner.numbers.join(",")}</TableCell>
-                  <TableCell align="right">{((winner.matchCount))}</TableCell>
+                  <TableCell align="right">{(Number(winner.matchCount))}</TableCell>
                 </TableRow>
               ))): (
                 <TableRow>
