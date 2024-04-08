@@ -147,6 +147,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             return;
         }
     }
+
     const fetchwithdrawdata = async (): Promise<boolean | undefined>=> {
         if (!isContractReady || !lottoContract) {
             console.error("Lotto contract is not initialized");
@@ -154,28 +155,29 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         }
         
         try {
+            
+            const tickets = await lottoContract.getTicketArrayLen();
             const winners = await lottoContract.getMywinnerForCurrentWeek();
-            const tickets = await lottoContract.getMyTicketsForCurrentWeek();
-            let check = false;
-            if ((!tickets || tickets.length === 0) || (!winners || winners.length === 0)) {
+             let check = false;
+            if ((tickets === 0) || (!winners || winners.length === 0)) {
                 //console.log("No winners found for the current week");
-                return check;
-            } else{
-                for(let i = 0; i< winners.length;i++){
-                    if (winners[i].winner == tickets[0].entrant){
-                        check = true;
-                    }
-                }
-                if (check){
-                    await lottoContract.withdrawWinnings();
-                }
-                return check;
-            }
+                return false;
+             } else{
+            //     for(let i = 0; i< winners.length;i++){
+            //         if (winners[i].winner == tickets[0].entrant){
+            //             check = true;
+            //         }
+            //     }
+            //     if (check){
+                     await lottoContract.withdrawWinnings();
+            //     }
+                 return true;
+             }
 
-
-            return winners;
-        } catch (error) {
-            console.error("Failed to fetch recent winners:", error);
+                
+           // return tickets;
+            } catch (error) {
+            console.error("Failed to fetch recent withdraw data:", error);
             return;
         }
     }
@@ -300,6 +302,8 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         isContractReady,
         isOwner,
         fetchInitTimestep,
-        requestPrizeDistribution
+        requestPrizeDistribution,
+        fetchwithdrawdata,
+        
     };
 }
