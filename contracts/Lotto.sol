@@ -175,7 +175,7 @@ contract Lotto649 {
         return (winningPrizes,winnerCounts);
     }
 
-    function generateWinningNumbers() public onlyOwner timeForNewPool {
+    function generateWinningNumbers() public onlyOwner {//timeForNewPool {
     // Assuming we want to generate 6 unique random numbers
     for (uint8 i = 0; i < 6; i++) {
         // Simplified random number generation logic
