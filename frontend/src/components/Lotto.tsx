@@ -207,6 +207,7 @@ export function Lotto(): ReactElement {
   };
 
   const handleCloseCheckResultsModal = () => {
+    setWinnerrs([]); 
     setOpenCheckResultsModal(false);
   };
 
