@@ -75,7 +75,7 @@ const CheckResults: React.FC<CheckResultProps> = ({
                     {winner.winner}
                   </TableCell>
                   <TableCell align="right">{winner.numbers.join(",")}</TableCell>
-                  <TableCell align="right">{((winner.matchCount)%6)}</TableCell>
+                  <TableCell align="right">{((winner.matchCount))}</TableCell>
                 </TableRow>
               ))): (
                 <TableRow>

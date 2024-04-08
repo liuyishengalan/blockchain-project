@@ -176,7 +176,6 @@ contract Lotto649 {
 
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
 
-        
         prizeInfo[] memory prizeList = new prizeInfo[](4);
         for (uint i = 0; i < 4; i++) {
             prizeList[i] = prizeInfo({
@@ -187,9 +186,7 @@ contract Lotto649 {
         return prizeList;
     }
 
-
-
-    function generateWinningNumbers() public onlyOwner {//timeForNewPool {
+    function generateWinningNumbers() public onlyOwner timeForNewPool {
     // Assuming we want to generate 6 unique random numbers
     for (uint8 i = 0; i < 6; i++) {
         // Simplified random number generation logic
