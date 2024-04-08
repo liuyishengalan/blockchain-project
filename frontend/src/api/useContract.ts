@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Contract, ethers } from 'ethers';
 import LottoArtifact from '../artifacts/contracts/Lotto.sol/Lotto649.json';
 import { Web3Provider } from '@ethersproject/providers';
+import { PrizeNcounts } from '../components/AdminLogin';
 
 interface WinnerInfo {
     winner: string; // address in Solidity is analogous to string in TypeScript when dealing with ethers.js
@@ -237,7 +238,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
                 value: ethers.utils.parseEther("0"),
             });
             // ==========================================================================
-            
+
             const receipt = await transactionResponse.wait();
     
             if (receipt.status === 1) {
@@ -262,10 +263,11 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             const tx= await lottoContract.announceWinners({
                 value: ethers.utils.parseEther("0"),
             });
+            const prizeNcounts:PrizeNcounts[] = tx;
             const receipt = await tx.wait();
             if (receipt.status === 1) {
                 console.log("Winners and prize distribution request successfully");
-                return {success: true, receipt: receipt};
+                return {success: true, receipt: prizeNcounts};
             }else{
                 console.error("Transaction failed without a success receipt.");
                 return { success: false, error: "Transaction failed without a success receipt." };
@@ -275,6 +277,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             return { success: false, error: error};
         }
     }
+
 
     const requestNewLottoRound = async (): Promise<boolean|undefined> => {
         if (!isContractReady || !lottoContract) {
