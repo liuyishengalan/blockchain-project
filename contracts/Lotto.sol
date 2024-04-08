@@ -256,6 +256,13 @@ contract Lotto649 {
         return ticketCount;
     }
 
+    function generateWinningNumbersTest() public timeForNewPool {
+        uint256 currentWeek = getCurrentWeek();
+        uint8[6] memory winningNums = [1, 2, 3, 4, 5, 6];
+
+        winningNumbers[currentWeek] = winningNums;
+    }
+
     function getMywinnerForCurrentWeek() external view returns (WinnerInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
         // uint256 wCount = 0;
