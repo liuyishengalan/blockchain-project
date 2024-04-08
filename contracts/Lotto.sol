@@ -109,6 +109,7 @@ contract Lotto649 {
     function announceWinners() public onlyOwner winningNumAnnounced returns (prizeInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
+        require(annouce[currentWeek] == false, "Already annouce");
 
         // uint8[6] memory winningNums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
         

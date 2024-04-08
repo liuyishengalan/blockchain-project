@@ -43,7 +43,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
   const [prizeNcounts, setPrizeNcounts] = React.useState<PrizeNcounts[]>([]);
   const [showPrizeNcounts, setShowPrizeNcounts] = React.useState(false);
   // const [initResult, setinitResult] = React.useState<string>();
-  const prize:PrizeNcounts[] = prizeNcounts
+  // const prize:PrizeNcounts[] = prizeNcounts
 
 
   // Use useEffect to react to changes in generatedWinningNumbers
@@ -75,7 +75,8 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
       console.log("printing prize and cont:",prize)
       console.log("printing prize and cont:",prize[0].prize)
       console.log("printing prize and cont:",prize[0].count)
-      setShowPrizeNcounts(true);};
+      // setShowPrizeNcounts(true)
+      ;};
   }
 
   return (
@@ -185,7 +186,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
               </TableHead>
               <TableBody>
               {numberGenerated ? (
-                prizeNcounts.length === 0 && showPrizeNcounts ? (
+                prizeNcounts === undefined && showPrizeNcounts ? (
                   <TableRow>
                     <TableCell align = "center">No Winners</TableCell><TableCell align = "center">No Winners</TableCell>
                     {/* <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell> */}
