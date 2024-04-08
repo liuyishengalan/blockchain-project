@@ -176,7 +176,14 @@ contract Lotto649 {
 
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
 
-        return (winningPrizes,winnerCounts);
+        prizeInfo[] memory prizeList = new prizeInfo[](4);
+        for (uint i = 0; i < 4; i++) {
+            prizeList[i] = prizeInfo({
+                prize: winningPrizes[i],
+                count: winnerCounts[i]
+            });
+        }
+        return prizeList;
     }
 
     function generateWinningNumbers() public onlyOwner timeForNewPool {
