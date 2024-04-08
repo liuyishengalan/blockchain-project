@@ -157,22 +157,23 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         
         try {
             
-            const tickets = await lottoContract.getTicketArrayLen();
+            const tickets = await lottoContract.getMyTicketsForCurrentWeek();
             const winners = await lottoContract.getMywinnerForCurrentWeek();
              let check = false;
-            if ((tickets === 0) || (!winners || winners.length === 0)) {
+            if ((tickets.length === 0 || !tickets) || (!winners || winners.length === 0)) {
                 //console.log("No winners found for the current week");
                 return false;
              } else{
-            //     for(let i = 0; i< winners.length;i++){
-            //         if (winners[i].winner == tickets[0].entrant){
-            //             check = true;
-            //         }
-            //     }
-            //     if (check){
+                for(let i = 0; i< winners.length;i++){
+                    if (winners[i].winner == tickets[0].entrant){
+                        check = true;
+                    }
+                }
+                if (check){
                 await lottoContract.withdrawWinnings();
-            //     }
-                 return true;
+                return true;
+                 }else{
+                 return true;}
              }
 
                 
