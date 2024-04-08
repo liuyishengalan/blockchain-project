@@ -169,7 +169,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             //         }
             //     }
             //     if (check){
-                     await lottoContract.withdrawWinnings();
+                await lottoContract.withdrawWinnings();
             //     }
                  return true;
              }
