@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react';
 import { Button,TextField, Box, Typography, Grid, TableContainer, TableHead,TableRow,TableCell,TableBody,Table  } from '@mui/material';
 import Paper from '@mui/material/Paper';
+// import WinnerInfo from './CheckResults';
 
+interface WinnerInfo {
+  winner: string; 
+  matchCount: number;
+  numbers: number[];
+}
 interface AdminLoginProps {
   handleClose: () => void;
   handleGenerateRequest: () => void;
-  generatedWinningNumbers: number[] ;
-  winners: string[];
+  generatedWinningNumbers: number[];
+  winners: WinnerInfo[];
   prizePool: string; 
   timeRemaining: number; 
   requestNewLottoRound: () => Promise<boolean | undefined>;
@@ -52,12 +58,12 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
     // Trigger the generation of new numbers and the start of a new lotto round
     await handleGenerateRequest();
     // The state update for winningNumbers is now handled by the useEffect hook
+    setShowPrizeNcounts(false);
+    setShowWinners(false);   
   };
 
   const handleShowWinners = () => {
-    const winners = winnersAdd;
     if (winners) {
-      setWinnersAdd(winners)
       setShowWinners(true);};
   }
 
@@ -146,7 +152,7 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
                   winners.map((item, index) => ( 
                     <TableRow key={index}>
                       <TableCell component="th" scope="row" key={index}>
-                        {item}
+                        {item.winner}
                       </TableCell>
                     </TableRow>
                   ))

@@ -36,6 +36,10 @@ contract Lotto649 {
         uint8 prize;
     }
     
+    struct prizeInfo {
+        uint256 prize;
+        uint256 count;
+    }
 
     mapping(uint256 => uint256[]) public lottoPoolByWeek;
     mapping(uint256 => Ticket[]) public ticketsByWeek;
@@ -102,7 +106,7 @@ contract Lotto649 {
     }
 
 
-    function announceWinners() public onlyOwner winningNumAnnounced returns (uint256[4] memory,uint256[4] memory) {
+    function announceWinners() public onlyOwner winningNumAnnounced returns (prizeInfo[] memory) {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
 
@@ -172,7 +176,15 @@ contract Lotto649 {
 
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
 
-        return (winningPrizes,winnerCounts);
+        
+        prizeInfo[] memory prizeList = new prizeInfo[](4);
+        for (uint i = 0; i < 4; i++) {
+            prizeList[i] = prizeInfo({
+                prize: winningPrizes[i],
+                count: winnerCounts[i]
+            });
+        }
+        return prizeList;
     }
 
 

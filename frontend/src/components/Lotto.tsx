@@ -306,6 +306,7 @@ export function Lotto(): ReactElement {
       }
     }
   }
+  
   const handleNewLottoRound = async () => {
     console.log('request for starting new lotto round sent!');
     setIsGeneratingNumbers(true)
@@ -476,7 +477,7 @@ export function Lotto(): ReactElement {
                   handleClose={handleCloseAdminLoginModal}
                   handleGenerateRequest={handleGenerateWinningNumbers}
                   generatedWinningNumbers={winningNumbers}
-                  winners = {winners}
+                  winners = {recentWinner}
                   prizePool={prizePool || ''}
                   timeRemaining={daysLeft}
                   requestNewLottoRound={requestNewLottoRound}
