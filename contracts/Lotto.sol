@@ -175,6 +175,8 @@ contract Lotto649 {
         return (winningPrizes,winnerCounts);
     }
 
+
+
     function generateWinningNumbers() public onlyOwner {//timeForNewPool {
     // Assuming we want to generate 6 unique random numbers
     for (uint8 i = 0; i < 6; i++) {
@@ -256,7 +258,7 @@ contract Lotto649 {
         return ticketCount;
     }
 
-    function generateWinningNumbersTest() public timeForNewPool {
+    function generateWinningNumbersTest() public onlyOwner {
         uint256 currentWeek = getCurrentWeek();
         uint8[6] memory winningNums = [1, 2, 3, 4, 5, 6];
 
