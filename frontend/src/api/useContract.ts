@@ -231,11 +231,13 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             //     value: ethers.utils.parseEther("0"),
             // });
 
+            // ==========================================================================
             // NOTE: testing generating winning numbers [1，2，3，4，5，6]
             const transactionResponse = await lottoContract.generateWinningNumbersTest({
                 value: ethers.utils.parseEther("0"),
             });
-
+            // ==========================================================================
+            
             const receipt = await transactionResponse.wait();
     
             if (receipt.status === 1) {
