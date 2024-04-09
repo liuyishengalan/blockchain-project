@@ -36,7 +36,7 @@ interface MyTicketInfo {
 }
 
 
-const contractAddress = '0x194EDc1214Fa5d55fa3af83A7BCBe80181E338D3' //chris 
+const contractAddress = '0x127F928151971a351B3eE2A6Ff92570Ca425A532' //chris 
 // const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
 
 export function Lotto(): ReactElement {
