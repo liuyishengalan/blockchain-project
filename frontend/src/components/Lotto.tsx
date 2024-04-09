@@ -258,8 +258,8 @@ export function Lotto(): ReactElement {
   
   
   const handlewithdraw = async () => {
-    const check = await fetchwithdrawdata();
-    if(check) {setWin(check)};
+    const checkwithdraw = await fetchwithdrawdata();
+    //if(check) {setWin(check)};
     // if (!checkwithdraw || checkwithdraw.length == 0){
     //   alert("You have noting to withdraw with!");
     // } else {
@@ -288,7 +288,7 @@ export function Lotto(): ReactElement {
     if(checkwithdraw){
       alert("Successfullt Withdraw! Check your account.");
     }else{
-      alert("You have noting to withdraw with!");
+      alert("You have nothing to withdraw with!");
     }
   }
 
