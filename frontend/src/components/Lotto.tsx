@@ -17,6 +17,7 @@ import eth_logo from '../assets/eth.gif';
 import load_gif from '../assets/load.gif'
 import { modalStyle } from '../styles/styles';
 import { use } from 'chai';
+import { request } from 'http';
 
 // import CountdownTimer from './CountdownTimer';
 //import io from 'socket.io-client';
@@ -35,7 +36,7 @@ interface MyTicketInfo {
 }
 
 
-const contractAddress = '0x4CbC0bacDC756Ee89BabdFA7DF2CA645178019e5' //chris 
+const contractAddress = '0x14DC5158CB1F2F9B5CF5b97754BD9555f60A58ED' //chris 
 // const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
 
 export function Lotto(): ReactElement {
@@ -157,36 +158,36 @@ export function Lotto(): ReactElement {
     }
   }, [active]);
 
-  const handlePrizeDistribution = async () => {
-    let isError_distributePrize = false;
-    setIsTransactionProcessing(true);
-    if(true){  //placeholder for the condition to check if the winning numbers have been generated
-      try {
-        const result = await requestPrizeDistribution();
-        console.log("requestion for prize distribution sent backed:", result.success);
-        setIsTransactionProcessing(false);
-        if (Array.isArray(result.receipt)) {
-          const prizeNcounts: PrizeNcounts[] = result.receipt as PrizeNcounts[];
-          console.log('prizeNcounts:', prizeNcounts);  // Add this line
-          return prizeNcounts;
-        } else {
-          console.error('result.receipt is not an array:', result.receipt);
-          return;
-        }
-      } catch (error) {
-        console.error("Failed to generate numbers", error);
-        isError_distributePrize = true; 
-      } finally {
-        if (isError_distributePrize === false) {
-          alert("Successfully distrubted prize!");
-        } else {
-          alert("Operation Cancelled!");
-        }
-      }
-    } else {
-      alert("Please wait for winning number generation before distribute prize!");
-    }
-  }
+  // const handlePrizeDistribution = async () => {
+  //   let isError_distributePrize = false;
+  //   setIsTransactionProcessing(true);
+  //   if(true){  //placeholder for the condition to check if the winning numbers have been generated
+  //     try {
+  //       const response  = await requestPrizeDistribution();
+  //       // console.log("requestion for prize distribution sent backed:", result.success);
+  //       setIsTransactionProcessing(false);
+  //       if (Array.isArray(response.receipt)) {
+  //         const prizeNcounts: PrizeNcounts[] = result.receipt as PrizeNcounts[];
+  //         console.log('prizeNcounts:', prizeNcounts);  // Add this line
+  //         return prizeNcounts;
+  //       } else {
+  //         console.error('result.receipt is not an array:', result.receipt);
+  //         return;
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to generate numbers", error);
+  //       isError_distributePrize = true; 
+  //     } finally {
+  //       if (isError_distributePrize === false) {
+  //         alert("Successfully distrubted prize!");
+  //       } else {
+  //         alert("Operation Cancelled!");
+  //       }
+  //     }
+  //   } else {
+  //     alert("Please wait for winning number generation before distribute prize!");
+  //   }
+  // }
 
   const handleConnectWallet = useCallback(async () => {
     // Since we're inside a callback, we don't use the hook here, 
@@ -488,7 +489,7 @@ export function Lotto(): ReactElement {
                   prizePool={prizePool || ''}
                   timeRemaining={daysLeft}
                   requestNewLottoRound={requestNewLottoRound}
-                  handlePrizeDistribution={handlePrizeDistribution}
+                  requestPrizeDistribution={requestPrizeDistribution}
                 />
               </div>
             </Modal>

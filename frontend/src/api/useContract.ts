@@ -262,22 +262,41 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         }
     
         try {
-            const tx= await lottoContract.announceWinners({
+            const transactionResponse = await lottoContract.announceWinners({
                 value: ethers.utils.parseEther("0"),
             });
-            console.log("backend announceWinners tx:",tx);
-            // const prizeNcounts:PrizeNcounts[] = tx;
-            const receipt = await tx.wait();
+            const receipt = await transactionResponse.wait();
             if (receipt.status === 1) {
                 console.log("Winners and prize distribution request successfully");
-                return {success: true, receipt: tx};
+                return {success: true, receipt: receipt};
             }else{
                 console.error("Transaction failed without a success receipt.");
                 return { success: false, error: "Transaction failed without a success receipt." };
             }
+
+
+
+
+            // const [prize, counts]= await lottoContract.announceWinners({
+            //     value: ethers.utils.parseEther("0"),
+            // });
+            // console.log("backend announceWinners - prize :",prize);
+            // console.log("backend announceWinners - counts :",counts);
+
+            // return [prize, counts];
+            // const prizeNcounts:PrizeNcounts[] = tx;
+            // const receipt = await tx.wait();
+            // if (receipt.status === 1) {
+            //     console.log("Winners and prize distribution request successfully");
+            //     return {success: true, receipt: tx};
+            // }else{
+            //     console.error("Transaction failed without a success receipt.");
+            //     return { success: false, error: "Transaction failed without a success receipt." };
+            // }
         } catch (error) {
             console.error("Failed to fetch prize distribution:", error);
-            return { success: false, error: error};
+            return
+            // return { success: false, error: error};
         }
     }
 
