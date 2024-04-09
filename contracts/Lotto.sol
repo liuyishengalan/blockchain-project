@@ -216,9 +216,9 @@ contract Lotto649 {
         return (block.timestamp - startTimestamp) / WEEK_DURATION + 1; 
     }
 
-    function withdrawWinnings() external {
+    function withdrawWinnings() external payable {
         uint256 amount = winnings[msg.sender];
-        require(amount > 0, "No winnings to withdraw");
+        // require(amount > 0, "No winnings to withdraw");
         winnings[msg.sender] = 0;
         payable(msg.sender).transfer(amount);
     }
