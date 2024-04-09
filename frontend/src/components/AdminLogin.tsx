@@ -70,8 +70,9 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
 
   const distributePrize = async () => {
     const prize = await handlePrizeDistribution();
+    console.log("printing prize and cont:",prize)
     if (prize) {
-      setPrizeNcounts(prize);
+      // setPrizeNcounts(prize);
       console.log("printing prize and cont:",prize)
       console.log("printing prize and cont:",prize[0].prize)
       console.log("printing prize and cont:",prize[0].count)
@@ -146,25 +147,19 @@ const AdminLogin: React.FC<AdminLoginProps>  = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-              {numberGenerated ? (
-                winners.length === 0 && showWinners ? (
-                  <TableRow>
-                    <TableCell colSpan={3} align="center">Unfortunately, No winners <span role="img" aria-label="sad">☹️</span></TableCell>
-                  </TableRow>
-                ) : (
-                  winners.map((item, index) => ( 
-                    <TableRow key={index}>
-                      <TableCell component="th" scope="row" key={index}>
-                        {item.winner}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={3} align="center" style={{ color: 'red' }} >Winning number is not generatede yet</TableCell>
+            {showWinners && winners && winners.length > 0 ? (winners.map((winner, index) => ( 
+             <TableRow key={index} >
+                  <TableCell component="th" scope="row">
+                    {winner.winner}
+                  </TableCell>
+                  {/* <TableCell align="right">{winner.numbers.join(",")}</TableCell>
+                  <TableCell align="right">{(Number(winner.matchCount))}</TableCell> */}
                 </TableRow>
-              )}
+              ))): (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">No Winners Data Available</TableCell>
+                </TableRow>
+              )} 
             </TableBody>
             </Table>
           </TableContainer>

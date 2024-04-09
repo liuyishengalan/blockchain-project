@@ -35,7 +35,7 @@ interface MyTicketInfo {
 }
 
 
-const contractAddress = '0xe2EC9E3ee184C63a8Fd8cB92F7C8487C46b8a20C' //chris 
+const contractAddress = '0xaaf936D83BF5672A0cE351A1a5303A0Ee027f0b7' //chris 
 // const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
 
 export function Lotto(): ReactElement {
@@ -165,7 +165,14 @@ export function Lotto(): ReactElement {
         const result = await requestPrizeDistribution();
         console.log("requestion for prize distribution sent backed:", result.success);
         setIsTransactionProcessing(false);
-        return result.receipt;        
+        if (Array.isArray(result.receipt)) {
+          const prizeNcounts: PrizeNcounts[] = result.receipt as PrizeNcounts[];
+          console.log('prizeNcounts:', prizeNcounts);  // Add this line
+          return prizeNcounts;
+        } else {
+          console.error('result.receipt is not an array:', result.receipt);
+          return;
+        }
       } catch (error) {
         console.error("Failed to generate numbers", error);
         isError_distributePrize = true; 

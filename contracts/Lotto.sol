@@ -106,7 +106,7 @@ contract Lotto649 {
     }
 
 
-    function announceWinners() public onlyOwner winningNumAnnounced returns (prizeInfo[] memory) {
+    function announceWinners() public onlyOwner winningNumAnnounced returns (uint256[] memory, uint256[] memory) {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
         require(annouce[currentWeek] == false, "Already annouce");
@@ -177,14 +177,15 @@ contract Lotto649 {
 
         emit WinnersAnnounced(currentWeek, winningNumbers[getCurrentWeek()], winningPrizes);
 
-        prizeInfo[] memory prizeList = new prizeInfo[](4);
+        uint256[] memory prizes = new uint256[](4);
+        uint256[] memory counts = new uint256[](4);
+
         for (uint i = 0; i < 4; i++) {
-            prizeList[i] = prizeInfo({
-                prize: winningPrizes[i],
-                count: winnerCounts[i]
-            });
+            prizes[i] = winningPrizes[i];
+            counts[i] = winnerCounts[i];
         }
-        return prizeList;
+    
+        return (prizes, counts);
     }
 
     function generateWinningNumbers() public onlyOwner timeForNewPool {

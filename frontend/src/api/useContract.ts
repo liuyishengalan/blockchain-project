@@ -158,14 +158,15 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
         try {
             
             const tickets = await lottoContract.getMyTicketsForCurrentWeek();
+            console.log("tickets:",tickets[0].entrant);
             const winners = await lottoContract.getMywinnerForCurrentWeek();
-             let check = false;
+            let check = false;
             if ((tickets.length === 0 || !tickets) || (!winners || winners.length === 0)) {
                 //console.log("No winners found for the current week");
                 return false;
-             } else{
+             } else {
                 for(let i = 0; i< winners.length;i++){
-                    if (winners[i].winner == tickets[0].entrant){
+                    if (winners[i].winner === tickets[0].entrant){
                         check = true;
                     }
                 }
@@ -264,11 +265,12 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             const tx= await lottoContract.announceWinners({
                 value: ethers.utils.parseEther("0"),
             });
-            const prizeNcounts:PrizeNcounts[] = tx;
+            console.log("backend announceWinners tx:",tx);
+            // const prizeNcounts:PrizeNcounts[] = tx;
             const receipt = await tx.wait();
             if (receipt.status === 1) {
                 console.log("Winners and prize distribution request successfully");
-                return {success: true, receipt: prizeNcounts};
+                return {success: true, receipt: tx};
             }else{
                 console.error("Transaction failed without a success receipt.");
                 return { success: false, error: "Transaction failed without a success receipt." };
