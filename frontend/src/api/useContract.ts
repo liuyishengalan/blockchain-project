@@ -178,7 +178,7 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
                 if (check){
                     
                  await lottoContract.withdrawWinnings({
-                    value: ethers.utils.parseEther("0.001"),
+                    value: ethers.utils.parseEther("0"),
                 });
                 return true;
                  }else{

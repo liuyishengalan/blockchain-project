@@ -217,10 +217,7 @@ contract Lotto649 {
     }
 
     function withdrawWinnings() external payable {
-<<<<<<< HEAD
         // uint256 amount = winnings[msg.sender];
-=======
->>>>>>> 1fbec7f988ed0ba0627d29e4bf2151f72d3965cd
         uint256 amount = 0.00001 ether;
         require(amount > 0, "No winnings to withdraw");
         winnings[msg.sender] = 0;
