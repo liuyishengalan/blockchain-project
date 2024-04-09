@@ -35,7 +35,7 @@ interface MyTicketInfo {
 }
 
 
-const contractAddress = '0x4CbC0bacDC756Ee89BabdFA7DF2CA645178019e5' //chris 
+const contractAddress = '0x14DC5158CB1F2F9B5CF5b97754BD9555f60A58ED' //chris 
 // const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
 
 export function Lotto(): ReactElement {
@@ -257,8 +257,8 @@ export function Lotto(): ReactElement {
   
   
   const handlewithdraw = async () => {
-    const check = await fetchwithdrawdata();
-    if(check) {setWin(check)};
+    const checkwithdraw = await fetchwithdrawdata();
+    //if(check) {setWin(check)};
     // if (!checkwithdraw || checkwithdraw.length == 0){
     //   alert("You have noting to withdraw with!");
     // } else {
@@ -287,7 +287,7 @@ export function Lotto(): ReactElement {
     if(checkwithdraw){
       alert("Successfullt Withdraw! Check your account.");
     }else{
-      alert("You have noting to withdraw with!");
+      alert("You have nothing to withdraw with!");
     }
   }
 
