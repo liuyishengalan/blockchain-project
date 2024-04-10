@@ -16,7 +16,7 @@ describe("Lotto649", function () {
         const Lotto649 = await ethers.getContractFactory("Lotto649");
         //await Lotto649.waitForDeployment();
         const lotto = await Lotto649.deploy();
-        const ticketPrice = ethers.parseEther("1");
+        const ticketPrice = ethers.parseEther("0.001");
         //await lotto.deployed();
         //startAt = Math.floor(Date.now() / 1000); // current timestamp in seconds
         return {lotto,owner, player1, player2,ticketPrice};
@@ -288,7 +288,7 @@ describe("Lotto649", function () {
         expect(ticket12[0].prize).to.equal(1, "Incorrect prize amount for player1");
         
     });
-
+    
     it("should correctly use Certain winner function", async function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
     
@@ -346,6 +346,7 @@ describe("Lotto649", function () {
         expect(ticket1[1].matchCount).to.equal(4, "Incorrect match count amount for player2");
         
     });
+
 
 
 });

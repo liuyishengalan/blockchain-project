@@ -160,11 +160,10 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
             const tickets = await lottoContract.getMyTicketsForCurrentWeek({
                 value: ethers.utils.parseEther("0"),
             });
-            console.log("tickets:",tickets[0].entrant);
             const winners = await lottoContract.getMywinnerForCurrentWeek({
                 value: ethers.utils.parseEther("0"),
             });
-            let check = false;
+             let check = false;
             if ((tickets.length === 0 || !tickets) || (!winners || winners.length === 0)) {
                 //console.log("No winners found for the current week");
                 return false;

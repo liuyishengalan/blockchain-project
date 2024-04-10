@@ -25,22 +25,17 @@ function createData_odd(
 }
 
 const rows_prize = [
-  createData_prize('6/6', 'Fixed', 'Share of $5,000,000'),
-  createData_prize('5/6+', '32.15% of the Pools Fund', 'Share of Pool'),
-  createData_prize('5/6', '13.5% of the Pools Fund', 'Share of Pool'),
-  createData_prize('4/6', '54.35% of the Pools Fund', 'Share of Pool'),
-  createData_prize('3/6', 'Fixed', 'Share of Pool'),
-  createData_prize('2/6+', 'Fixed', '10 ETH'),
-  createData_prize('2/6', 'Fixed', '5 ETH'),
+  createData_prize('6/6', 'Fixed', '100 ether'),
+  createData_prize('5/6', '32.15% of the Pools Fund', 'Share of Pool'),
+  createData_prize('4/6', '13.5% of the Pools Fund', 'Share of Pool'),
+  createData_prize('3/6', '54.35% of the Pools Fund', 'Share of Pool'),
 ];
 
 const rows_odd = [
   createData_odd('6/6', 'One in', 13983816),
-  createData_odd('5/6+', 'One in', 2330636),
   createData_odd('5/6', 'One in', 55492),
   createData_odd('4/6', 'One in', 1033),
   createData_odd('3/6', 'One in', 56.7),
-  createData_odd('2/6+', 'One in', 81.2),
   createData_odd('2/6', 'One in', 8.3),
   createData_odd('Any Prize', 'One in', 6.6),
 ];

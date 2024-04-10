@@ -36,7 +36,7 @@ contract Lotto649 {
         uint8 prize;
     }
     
-    struct prizeInfo {
+    struct PrizeInfo {
         uint256 prize;
         uint256 count;
     }
@@ -49,6 +49,8 @@ contract Lotto649 {
     mapping(address => mapping(uint256 => MyTicketInfo[])) public myTicket;
     mapping(address => mapping(uint256 => MyTicketInfo[])) public myTicketAfter;
     mapping(uint256 => bool) public annouce;
+    mapping(uint256 => uint8[4]) public prizeInfoByWeek;
+    mapping(uint256 => uint8[4]) public countInfoByWeek;
     //mapping(address => MyTicketInfo[]) public myTicket1;
 
     event TicketPurchased(address indexed buyer, uint256 week, uint8[6] numbers);
@@ -106,7 +108,7 @@ contract Lotto649 {
     }
 
 
-    function announceWinners() public onlyOwner winningNumAnnounced returns (uint256[] memory, uint256[] memory) {
+    function announceWinners() public onlyOwner winningNumAnnounced  {
         uint256 currentWeek = getCurrentWeek();
         require(ticketsByWeek[currentWeek].length > 0, "No tickets purchased");
         require(annouce[currentWeek] == false, "Already annouce");
@@ -155,6 +157,7 @@ contract Lotto649 {
             if (matchCount >= 3) {
                 uint256 prizeIndex = matchCount - 3; // Indexing into the winningPrizes and winnerCounts arrays
                 winnerCounts[prizeIndex]++;
+                
                 winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount,ticketsByWeek[currentWeek][i].numbers));
             }
 
@@ -163,10 +166,10 @@ contract Lotto649 {
         pot = 0; // Reset pot for the next round
         annouce[currentWeek] = true;
         // Calculate prize amounts based on winner counts
-        if (winnerCounts[3] > 0) winningPrizes[3] = TOTAL_LEVEL_1_PRIZE / winnerCounts[3];
-        if (winnerCounts[2] > 0) winningPrizes[2] = (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2];
-        if (winnerCounts[1] > 0) winningPrizes[1] = (potForDistribution * PERCENTAGE_3 / 1000) / winnerCounts[1];
-        if (winnerCounts[0] > 0) winningPrizes[0] = TOTAL_LEVEL_4_PRIZE / winnerCounts[0];
+        if (winnerCounts[3] > 0){ winningPrizes[3] = TOTAL_LEVEL_1_PRIZE / winnerCounts[3]; prizeInfoByWeek[currentWeek][0] = uint8( TOTAL_LEVEL_1_PRIZE / winnerCounts[3]); }
+        if (winnerCounts[2] > 0) {winningPrizes[2] = (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2];prizeInfoByWeek[currentWeek][0] = uint8( (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2]);}
+        if (winnerCounts[1] > 0){ winningPrizes[1] = (potForDistribution * PERCENTAGE_3 / 1000) / winnerCounts[1];prizeInfoByWeek[currentWeek][0] = uint8((potForDistribution * PERCENTAGE_3 / 1000) / winnerCounts[1]);}
+        if (winnerCounts[0] > 0){ winningPrizes[0] = TOTAL_LEVEL_4_PRIZE / winnerCounts[0];prizeInfoByWeek[currentWeek][0] = uint8( TOTAL_LEVEL_4_PRIZE / winnerCounts[0]);}
 
         // Update winnings mapping for each winner
         for (uint256 i = 0; i < winnersByWeek[currentWeek].length; i++) {
@@ -184,11 +187,12 @@ contract Lotto649 {
             prizes[i] = winningPrizes[i];
             counts[i] = winnerCounts[i];
         }
-    
-        return (prizes, counts);
+        uint256[4] memory winnin = [uint256(1), uint256(2), uint256(3), uint256(4)];
+        
     }
+    
 
-    function generateWinningNumbers() public onlyOwner timeForNewPool {
+    function generateWinningNumbers() public onlyOwner {//timeForNewPool {
     // Assuming we want to generate 6 unique random numbers
     for (uint8 i = 0; i < 6; i++) {
         // Simplified random number generation logic
