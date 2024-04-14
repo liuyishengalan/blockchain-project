@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
-
 contract Lotto649 {
     address public owner;
     uint256 public ticketPrice = 0.001 ether;
@@ -16,9 +14,9 @@ contract Lotto649 {
     // Prize Distribution Constants
     uint256 constant PERCENTAGE_4 = 5435 ; 
     uint256 constant TOTAL_LEVEL_1_PRIZE = 100 ether; 
-    uint256 constant PERCENTAGE_2 = 3225;
+    uint256 constant PERCENTAGE_2 = 3215;
     uint256 constant PERCENTAGE_3 = 135;
-    
+    uint256 public keeppot = 0;
 
     struct Ticket {
         uint8[6] numbers;
@@ -59,7 +57,6 @@ contract Lotto649 {
         _;
     }
 
-
     modifier timeForNewPool() {
 
         // NOTE: testing purposes only, change WEEK_DURATION duration for 5 minutes
@@ -85,7 +82,6 @@ contract Lotto649 {
         seed = (block.timestamp + block.prevrandao) % 100;
         lottoPoolByWeek[getCurrentWeek()].push(lotteStartTimestamp); // Record the start time of the new pool for each of the Lotto
     }
-
 
     function purchaseTicket(uint8[6] calldata numbers) external payable{
         require(msg.value == ticketPrice, "Ticket price is 1 ETH");
@@ -113,7 +109,7 @@ contract Lotto649 {
 
         // uint8[6] memory winningNums = sortTicketNumber(winningNumbers[getCurrentWeek()]);
         
-        uint256 potForDistribution = pot/2;
+        uint256 potForDistribution = (pot + keeppot)/2;
 
         uint256[4] memory winningPrizes = [uint256(0), uint256(0), uint256(0), uint256(0)];
         uint256[4] memory winnerCounts; // Automatically initialized to [0, 0, 0, 0]
@@ -150,24 +146,31 @@ contract Lotto649 {
             } else {prize = 5;}
             myTicketAfter[ticketsByWeek[currentWeek][i].entrant][currentWeek].push(MyTicketInfo(ticketsByWeek[currentWeek][i].numbers,uint8(prize)));
             
-
-
             if (matchCount >= 3) {
                 uint256 prizeIndex = matchCount - 3; // Indexing into the winningPrizes and winnerCounts arrays
                 winnerCounts[prizeIndex]++;
                 
                 winnersByWeek[currentWeek].push(WinnerInfo(ticketsByWeek[currentWeek][i].entrant, matchCount,ticketsByWeek[currentWeek][i].numbers));
             }
-
-        
         }
+        keeppot = potForDistribution;
         pot = 0; // Reset pot for the next round
         annouce[currentWeek] = true;
         // Calculate prize amounts based on winner counts
         if (winnerCounts[3] > 0){ winningPrizes[3] = TOTAL_LEVEL_1_PRIZE / winnerCounts[3];}
-        if (winnerCounts[2] > 0) {winningPrizes[2] = (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2];}
+        if (winnerCounts[2] > 0){ winningPrizes[2] = (potForDistribution * PERCENTAGE_2 / 10000) / winnerCounts[2];}
         if (winnerCounts[1] > 0){ winningPrizes[1] = (potForDistribution * PERCENTAGE_3 / 1000) / winnerCounts[1];}
         if (winnerCounts[0] > 0){ winningPrizes[0] = (potForDistribution * PERCENTAGE_4 / 10000) / winnerCounts[0];}
+
+        if(winnerCounts[0] == 0){
+            keeppot += (potForDistribution * PERCENTAGE_4 / 1000);
+        }
+        if (winnerCounts[1] == 0){
+            keeppot += (potForDistribution * PERCENTAGE_3 / 1000);
+        } 
+        if (winnerCounts[2] == 0){
+            keeppot += (potForDistribution * PERCENTAGE_2 / 10000);
+        }
 
         // Update winnings mapping for each winner
         for (uint256 i = 0; i < winnersByWeek[currentWeek].length; i++) {
@@ -229,7 +232,7 @@ contract Lotto649 {
     }
 
     function getPotSize() public view returns (uint256) {
-        return pot;
+        return (keeppot + pot);
     }
     
     // Function to fetch all tickets bought by a specific address in the current week
@@ -385,8 +388,6 @@ contract Lotto649 {
         return mytickett;
         
     }
-    
-    
 
     function getWinningNumsForCurrentWeek() external view returns (uint8[6] memory) {
         uint256 currentWeek = getCurrentWeek();
@@ -426,10 +427,4 @@ contract Lotto649 {
             quickSort(ticket, left, j - 1);    // j > left, so j > 0
         quickSort(ticket, j + 1, right);
     }
-
-
-    
-    
-    
-
 }

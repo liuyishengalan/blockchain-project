@@ -37,9 +37,10 @@ interface MyTicketInfo {
 
 
 //const contractAddress = '0x14DC5158CB1F2F9B5CF5b97754BD9555f60A58ED' //chris 
-// const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
+//const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
 //const contractAddress = '0x7D3652344cf74960fF53A7ACfdaDB3C484910118';
-const contractAddress = '0x4Cd6559fAB6F3535a78A4307a623F7BA8e3DDdb8';
+// const contractAddress = '0x4Cd6559fAB6F3535a78A4307a623F7BA8e3DDdb8';
+const contractAddress = '0x61a95B70dF4cC7781FE8CddcF25886CD43499268';
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -82,17 +83,29 @@ export function Lotto(): ReactElement {
 
  // TODO : Implement the logic to calculate the days left for the current round to end
   const daysLeft = 1;
- 
+  // console.log('Calculating days left!');
+
   // const daysLeft = async () => {
+  //   console.log('Calculating days left');
+
   //   const initTime = await fetchInitTimestep();
+  //   console.log('initTime:', initTime);
+  
   //   const initDate = new Date((initTime ?? 0) * 1000);
+  //   console.log('initDate:', initDate);
+  
   //   const currentDay = new Date();
+  //   console.log('currentDay:', currentDay);
+  
   //   const diff = currentDay.getTime() - initDate.getTime();
   //   const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
-  //   return diffDays<=7? 7 - (diffDays % 7): 0;
+  //   console.log('diffDays:', diffDays);
+  
+  //   const daysLeft = diffDays <= 7 ? 7 - (diffDays % 7) : 0;
+  //   console.log('daysLeft:', daysLeftValue);
+  
+  //   return daysLeft;
   // }
-
-    
 
   useEffect(() => {
     if (!library) {
@@ -335,8 +348,6 @@ export function Lotto(): ReactElement {
       }
     }
   }
-
-
 
   if (active) {
     if (!isContractReady) {
