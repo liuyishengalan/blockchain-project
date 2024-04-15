@@ -195,18 +195,18 @@ export const useLottoContract = (lottoContractAddress: string, provider: Web3Pro
 
     const fetchInitTimestep = async (): Promise<number | undefined> => {
         if (!isContractReady || !lottoContract) {
-            console.error("Lotto contract is not initialized");
-            return;
+          console.error("Lotto contract is not initialized");
+          return;
         }
-
+      
         try {
-            const timestep = await lottoContract.lotteStartTimestamp;
-            return parseInt(timestep); // Convert to milliseconds
+          const initTimeStep = await lottoContract.lotteStartTimestamp();
+          return initTimeStep.toNumber();
         } catch (error) {
-            console.error("Failed to fetch timestep:", error);
-            return;
+          console.error("Failed to fetch initial timestamp:", error);
+          return;
         }
-    }
+    };
 
     const requestBuyTicket = async (ticketNumbers: number[]) => {
         if (!isContractReady || !lottoContract) {

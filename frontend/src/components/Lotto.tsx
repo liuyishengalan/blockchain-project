@@ -40,7 +40,7 @@ interface MyTicketInfo {
 //const contractAddress = '0x7E256C17D890AC32262CB655E6dd2204ae847d34' // yisheng
 //const contractAddress = '0x7D3652344cf74960fF53A7ACfdaDB3C484910118';
 // const contractAddress = '0x4Cd6559fAB6F3535a78A4307a623F7BA8e3DDdb8';
-const contractAddress = '0x61a95B70dF4cC7781FE8CddcF25886CD43499268';
+const contractAddress = '0x2866F244EEdA23eA4f3259352AC5Aa9a649CbADE';
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
@@ -81,31 +81,37 @@ export function Lotto(): ReactElement {
 
   // check how many days are left for the current round to end (winning number released on Wednesday)//fetchTicket
 
- // TODO : Implement the logic to calculate the days left for the current round to end
-  const daysLeft = 1;
-  // console.log('Calculating days left!');
+  const daysLeft = async () => {
+    // console.log('Calculating days left');
 
-  // const daysLeft = async () => {
-  //   console.log('Calculating days left');
+    const initTime = await fetchInitTimestep();
+    // console.log('initTime:', initTime);
+  
+    const initDate = new Date((initTime ?? 0) * 1000); // convert sec to millisec.
+    // console.log('initDate:', initDate);
+  
+    const currentDay = new Date();
+    // console.log('currentDay:', currentDay);
+  
+    const diff = currentDay.getTime() - initDate.getTime();
+    const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    // console.log('diffDays:', diffDays);
+  
+    const daysLeft = diffDays <= 7 ? 7 - (diffDays % 7) : 0;
+    // console.log('daysLeft:', daysLeft);
+  
+    return daysLeft;
+  };
 
-  //   const initTime = await fetchInitTimestep();
-  //   console.log('initTime:', initTime);
-  
-  //   const initDate = new Date((initTime ?? 0) * 1000);
-  //   console.log('initDate:', initDate);
-  
-  //   const currentDay = new Date();
-  //   console.log('currentDay:', currentDay);
-  
-  //   const diff = currentDay.getTime() - initDate.getTime();
-  //   const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
-  //   console.log('diffDays:', diffDays);
-  
-  //   const daysLeft = diffDays <= 7 ? 7 - (diffDays % 7) : 0;
-  //   console.log('daysLeft:', daysLeftValue);
-  
-  //   return daysLeft;
-  // }
+  const [daysLeftValue, setDaysLeftValue] = useState<number>(0);
+
+  useEffect(() => {
+    const getDaysLeft = async () => {
+      const daysLeftvalue = await daysLeft();
+      setDaysLeftValue(daysLeftvalue);
+    };
+    getDaysLeft();
+  }, [daysLeft]);
 
   useEffect(() => {
     if (!library) {
@@ -408,7 +414,7 @@ export function Lotto(): ReactElement {
                 handlePurchase={handlePurchase}
                 currentWeek={currentWeek || 0} // Provide a default value for currentWeek
                 prizePool={prizePool || ''}
-                timeRemaining={daysLeft}
+                timeRemaining={daysLeftValue}
               />
               </div>
             </Modal>
@@ -499,7 +505,7 @@ export function Lotto(): ReactElement {
                   generatedWinningNumbers={winningNumbers}
                   winners = {recentWinner}
                   prizePool={prizePool || ''}
-                  timeRemaining={daysLeft}
+                  timeRemaining={daysLeftValue}
                   requestNewLottoRound={requestNewLottoRound}
                   requestPrizeDistribution={requestPrizeDistribution}
                 />
