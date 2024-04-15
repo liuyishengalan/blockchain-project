@@ -51,7 +51,7 @@ const HowItWorks = ({ handleClose }: { handleClose: () => void }) => {
           <ListItem>1. Participants select 6 unique numbers from 1-49 and pay 1 ETH to join the lottery</ListItem>
           <ListItem>2. Wait for the draw</ListItem>
           <ListItem>3. The more numbers of your ticket match the randomly selected draw numbers, the more you win</ListItem>
-          <ListItem>4. Win 1000 ETH if you match all 6 numbers!</ListItem>
+          <ListItem>4. Win 100 ETH if you match all 6 numbers!</ListItem>
           <ListItem>
             Read our whitepaper to find out more details 
             <Link href="https://docs.google.com/document/d/1_x84mUSPCAGY3bysVpDen1tvTYlRacN-wJWNU4r9jjE" target="_blank" rel="noopener noreferrer">
