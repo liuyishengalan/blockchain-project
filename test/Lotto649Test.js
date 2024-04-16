@@ -90,7 +90,7 @@ describe("Lotto649", function () {
         const numbers = [5, 12, 23, 34, 45, 46];
         
         await lotto.connect(player1).purchaseTicket(numbers, { value: ticketPrice});
-        await network.provider.send("evm_increaseTime", [60*60*24*7+1]);
+        await network.provider.send("evm_increaseTime", [60*5]);
         await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers({value:0});
     
