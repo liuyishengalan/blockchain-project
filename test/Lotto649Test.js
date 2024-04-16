@@ -14,7 +14,7 @@ describe("Lotto649", function () {
 
     async function deployVariable() {
         const [owner, player1, player2] = await ethers.getSigners();
-        const Lotto649 = await ethers.getContractFactory("Lotto649");
+        const Lotto649 = await ethers.getContractFactory("Lotto649_test");
         //await Lotto649.waitForDeployment();
         const lotto = await Lotto649.deploy();
         const ticketPrice = ethers.parseEther("0.001");
@@ -90,7 +90,7 @@ describe("Lotto649", function () {
         const numbers = [5, 12, 23, 34, 45, 46];
         
         await lotto.connect(player1).purchaseTicket(numbers, { value: ticketPrice});
-        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_increaseTime", [60*60*24*7+1]);
         await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers({value:0});
     
@@ -106,11 +106,14 @@ describe("Lotto649", function () {
         await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers({value:0});
         const nums = await lotto.getWinningNumsForCurrentWeek();
+     
         const mutableNums = [...nums];
+        //console.log(mutableNums)
         await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice });
         await lotto.connect(owner).announceWinners();
         const player1Winnings = await lotto.winnings(player1.address);
         expect(player1Winnings).to.equal(expectedPrize, "Incorrect prize amount for the winner");
+       
     });
 
     it("should correctly announce multiple winners and assign prizes", async function () {
