@@ -6,7 +6,9 @@ contract Lotto649 {
     uint256 public ticketPrice = 0.001 ether;
     uint256 public startTimestamp;  // blockchain timestamp
     uint256 public lotteStartTimestamp; // start time of the current ACTIVE lotto
-    uint256 public constant WEEK_DURATION = 1 weeks;
+    // NOTE: testing purposes only, change WEEK_DURATION duration for 5 minutes
+    uint256 public constant WEEK_DURATION = 5 minutes;
+    // uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
     uint256 public pot = 0; // Accumulated pot for the current week
     uint256 prize = 0;
@@ -58,10 +60,7 @@ contract Lotto649 {
     }
 
     modifier timeForNewPool() {
-
-        // NOTE: testing purposes only, change WEEK_DURATION duration for 5 minutes
-        uint TEST_DURATION = 10 seconds;
-        require(block.timestamp >= lotteStartTimestamp + TEST_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends");
+        require(block.timestamp >= lotteStartTimestamp + WEEK_DURATION, "Current Lotto is ACTIVE. Cannot perform this action before the current Lotto ends");
         _;
     }
 
@@ -163,7 +162,7 @@ contract Lotto649 {
         if (winnerCounts[0] > 0){ winningPrizes[0] = (potForDistribution * PERCENTAGE_4 / 10000) / winnerCounts[0];}
 
         if(winnerCounts[0] == 0){
-            keeppot += (potForDistribution * PERCENTAGE_4 / 1000);
+            keeppot += (potForDistribution * PERCENTAGE_4 / 10000);
         }
         if (winnerCounts[1] == 0){
             keeppot += (potForDistribution * PERCENTAGE_3 / 1000);

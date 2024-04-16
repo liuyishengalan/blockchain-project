@@ -35,7 +35,7 @@ interface MyTicketInfo {
   prize: number;
 }
 
-const contractAddress = '0xBd2d59Df8E689e27fB3c0cf2A401849e0ac5B5dA';
+const contractAddress = '0x8BB1218C137bEfC671988bE1Dd1598F5B05250B8';
 export function Lotto(): ReactElement {
   const { library, active, activate } = useWeb3React();
   const [openBuyTicketModal, setOpenBuyTicketModal] = useState(false);
