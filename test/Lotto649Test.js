@@ -1,6 +1,7 @@
 const { ethers,network } = require("hardhat");
 const { expect } = require("chai");
 const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
+const { string } = require("hardhat/internal/core/params/argumentTypes");
 //import "hardhat/console.sol";
 
 describe("Lotto649", function () {
@@ -58,14 +59,14 @@ describe("Lotto649", function () {
         const {lotto,owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
         const initialPot = await lotto.getPotSize();
         expect(initialPot).to.equal(0);
-
-        for (let i = 0; i < 3; i++) {
+        const buy = 3;
+        for (let i = 0; i < buy; i++) {
             await lotto.connect(player1).purchaseTicket([1, 2, 3, 4, 5, 6], { value: ticketPrice });
         }
-
-        const expectedPot = ethers.parseEther("3");
+        const expectt = (Number(buy) * Number(ticketPrice));
+        const expectedPot = ethers.parseEther("0.003");
         const actualPot = await lotto.getPotSize();
-        expect(actualPot).to.equal(expectedPot);
+        expect(actualPot).to.equal(expectt);
     });
 
     it("should correctly update purchases infor", async function () {
@@ -89,8 +90,9 @@ describe("Lotto649", function () {
         const numbers = [5, 12, 23, 34, 45, 46];
         
         await lotto.connect(player1).purchaseTicket(numbers, { value: ticketPrice});
-        
-        await lotto.connect(owner).generateWinningNumbers({gasLimit: 5000000});
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
+        await lotto.connect(owner).generateWinningNumbers({value:0});
     
         await expect(lotto.connect(player1).announceWinners())
           .to.be.revertedWith("Only the owner can perform this action");
@@ -99,9 +101,10 @@ describe("Lotto649", function () {
 
     it("should correctly announce the winner and assign the prize", async function () {
         const {lotto,owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
-        const expectedPrize = ethers.parseEther("1000");
-        
-        await lotto.connect(owner).generateWinningNumbers();
+        const expectedPrize = ethers.parseEther("100");
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
+        await lotto.connect(owner).generateWinningNumbers({value:0});
         const nums = await lotto.getWinningNumsForCurrentWeek();
         const mutableNums = [...nums];
         await lotto.connect(player1).purchaseTicket(mutableNums, { value: ticketPrice });
@@ -112,10 +115,11 @@ describe("Lotto649", function () {
 
     it("should correctly announce multiple winners and assign prizes", async function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
-        const expectedPrizePlayer1 = ethers.parseEther("1000");
-        const expectedPrizePlayer2 = ethers.parseEther("0.135");
-        const expectedPrizeOwner = ethers.parseEther("0.135");
-    
+        const expectedPrizePlayer1 = ethers.parseEther("100");
+        const expectedPrizePlayer2 = ethers.parseEther("0.000135");
+        const expectedPrizeOwner = ethers.parseEther("0.000135");
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers();
         const nums = (await lotto.getWinningNumsForCurrentWeek());
         const mutableNums = [...nums];
@@ -161,7 +165,8 @@ describe("Lotto649", function () {
 
     it("should correctly list winners for the current week", async function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
-    
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers();
         const nums = (await lotto.getWinningNumsForCurrentWeek());
         const mutableNums = [...nums];
@@ -203,6 +208,8 @@ describe("Lotto649", function () {
     
     it("should revert if announcing winners without tickets purchased", async function () {
         const {lotto,owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers();
         await expect(lotto.connect(owner).announceWinners())
             .to.be.revertedWith("No tickets purchased");
@@ -210,7 +217,9 @@ describe("Lotto649", function () {
 
     it("should generate winning numbers within the valid range and unique", async function () {
         const {lotto,owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
-        await lotto.generateWinningNumbers();
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
+        await lotto.connect(owner).generateWinningNumbers();
         const nums = await lotto.getWinningNumsForCurrentWeek();
 
         for (let i = 0; i < 6; i++) {
@@ -237,7 +246,8 @@ describe("Lotto649", function () {
 
     it("should correctly use Certain ticket function", async function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
-    
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers();
         const nums = (await lotto.getWinningNumsForCurrentWeek());
         const mutableNums = [...nums];
@@ -291,7 +301,8 @@ describe("Lotto649", function () {
     
     it("should correctly use Certain winner function", async function () {
         const { lotto, owner, player1, player2,ticketPrice } = await loadFixture(deployVariable);
-    
+        await network.provider.send("evm_increaseTime", [60*5]);
+        await network.provider.send("evm_mine");
         await lotto.connect(owner).generateWinningNumbers();
         const nums = (await lotto.getWinningNumsForCurrentWeek());
         const mutableNums = [...nums];
