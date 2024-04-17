@@ -7,8 +7,8 @@ contract Lotto649 {
     uint256 public startTimestamp;  // blockchain timestamp
     uint256 public lotteStartTimestamp; // start time of the current ACTIVE lotto
     // NOTE: testing purposes only, change WEEK_DURATION duration for 5 minutes
-    uint256 public constant WEEK_DURATION = 5 minutes;
-    // uint256 public constant WEEK_DURATION = 1 weeks;
+    // uint256 public constant WEEK_DURATION = 5 minutes;
+    uint256 public constant WEEK_DURATION = 1 weeks;
     uint256 private seed;
     uint256 public pot = 0; // Accumulated pot for the current week
     uint256 prize = 0;
