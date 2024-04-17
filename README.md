@@ -11,7 +11,9 @@ SEPOLIA_API_URL = "https://eth-sepolia.g.alchemy.com/v2/[THE-API-KEY]"
 SEPOLIA_PRIVATE_KEY = 'METAMASK-PRIVATE-KEY'
 ```
 
-Since the smart contract is deployed for 1-week long duration, we setup a specific version of the contract for testing purposes.
+**Since the smart contract is deployed for 1-week long duration, we setup a specific version of the contract for testing purposes.**
+- `contracts/Lotto_test_version.sol` is for testing
+- `contracts/Lotto.sol` is for deploying
 
 The round duration is set to shorter time for testing purposes.
 
